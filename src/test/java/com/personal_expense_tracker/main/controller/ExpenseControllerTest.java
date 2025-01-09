@@ -48,7 +48,7 @@ public class ExpenseControllerTest {
         // Arrange
         Expense expense = new Expense();
         expense.setCategory("Food");
-        expense.setAmount(100.0);
+        expense.setAmount(-100.0);
         expense.setDescription("Groceries");
         expense.setDate(LocalDate.of(2023, 1, 1));
 
