@@ -1,4 +1,5 @@
 # Eclipse-specific files
+.project
 .settings/
 
 # Maven-specific files
