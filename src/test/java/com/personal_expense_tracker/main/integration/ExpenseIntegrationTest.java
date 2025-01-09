@@ -1,6 +1,7 @@
 package com.personal_expense_tracker.main.integration;
 
 import org.junit.jupiter.api.*;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -10,14 +11,34 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExpenseIntegrationTest {
 
+    private static final PostgreSQLContainer<?> postgresContainer =
+            new PostgreSQLContainer<>("postgres:15")
+                    .withDatabaseName("expense_testdb")
+                    .withUsername("madina")
+                    .withPassword("m123");
+
     private Connection connection;
+
+
+    @BeforeAll
+    static void startContainer() {
+        // Запускаем контейнер перед тестами
+        postgresContainer.start();
+    }
+
+    @AfterAll
+    static void stopContainer() {
+        // Останавливаем контейнер после тестов
+        postgresContainer.stop();
+    }
 
     @BeforeAll
     public void setUpDatabase() throws SQLException {
         // Connect to the Dockerized PostgreSQL database
         connection = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/expense_testdb", "madina", "m123");
-
+                postgresContainer.getJdbcUrl(),
+                postgresContainer.getUsername(),
+                postgresContainer.getPassword());
         // Create a test table
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE Expenses (\n" +
