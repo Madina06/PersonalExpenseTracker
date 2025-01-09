@@ -1,6 +1,7 @@
 package com.personal_expense_tracker.main.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Expense {
     private int id;
@@ -58,5 +59,21 @@ public class Expense {
                 ", amount=" + amount +
                 ", date=" + date +
                 '}';
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Expense expense = (Expense) o;
+        return Double.compare(expense.amount, amount) == 0 &&
+               Objects.equals(description, expense.description) &&
+               Objects.equals(category, expense.category) &&
+               Objects.equals(date, expense.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description, category, amount, date);
     }
 }

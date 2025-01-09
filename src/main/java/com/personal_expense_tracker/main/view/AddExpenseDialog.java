@@ -53,11 +53,39 @@ public class AddExpenseDialog extends JDialog {
 
         saveButton.addActionListener(e -> {
             try {
+                String description = descriptionField.getText();
+                String amountText = amountField.getText();
+                String category = categoryField.getText();
+                String dateText = dateField.getText();
+
+                // Validate fields
+                if (description.isEmpty() || amountText.isEmpty() || category.isEmpty() || dateText.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "All fields must be filled out.");
+                    return;
+                }
+
+                double amount;
+                LocalDate date;
+
+                try {
+                    amount = Double.parseDouble(amountText);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "Amount must be a valid number.");
+                    return;
+                }
+
+                try {
+                    date = LocalDate.parse(dateText);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Date must be in the format YYYY-MM-DD.");
+                    return;
+                }
+
                 Expense expense = new Expense();
-                expense.setDescription(descriptionField.getText());
-                expense.setAmount(Double.parseDouble(amountField.getText()));
-                expense.setCategory(categoryField.getText());
-                expense.setDate(LocalDate.parse(dateField.getText()));
+                expense.setDescription(description);
+                expense.setAmount(amount);
+                expense.setCategory(category);
+                expense.setDate(date);
 
                 if (existingExpense != null) {
                     expense.setId(existingExpense.getId());
@@ -74,5 +102,26 @@ public class AddExpenseDialog extends JDialog {
                 JOptionPane.showMessageDialog(this, "Failed to save expense: " + ex.getMessage());
             }
         });
+
+    }
+    
+    public JTextField getDescriptionField() {
+        return descriptionField;
+    }
+
+    public JTextField getAmountField() {
+        return amountField;
+    }
+
+    public JTextField getCategoryField() {
+        return categoryField;
+    }
+
+    public JTextField getDateField() {
+        return dateField;
+    }
+
+    public JButton getSaveButton() {
+        return saveButton;
     }
 }

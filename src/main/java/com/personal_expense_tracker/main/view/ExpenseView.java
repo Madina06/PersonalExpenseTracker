@@ -11,10 +11,10 @@ import java.util.List;
 
 public class ExpenseView extends JFrame {
 
-    private JTable expenseTable;
-    private JButton addExpenseButton;
-    private JButton updateExpenseButton;
-    private JButton deleteExpenseButton;
+    JTable expenseTable;
+    JButton addExpenseButton;
+    JButton updateExpenseButton;
+    JButton deleteExpenseButton;
 
     private final ExpenseController expenseController;
 

@@ -37,7 +37,6 @@ public class AddExpenseView extends JFrame {
         add(saveButton);
     }
 
-    // Getters for fields
     public JTextField getAmountField() {
         return amountField;
     }
