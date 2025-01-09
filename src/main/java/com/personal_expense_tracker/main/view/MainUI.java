@@ -21,7 +21,7 @@ public class MainUI extends JFrame {
         setTitle("Personal Expense Tracker");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(3, 1));
+        setLayout(new GridLayout(1, 1));
 
         // Controllers
         expenseController = new ExpenseController(new ExpenseRepository(connection));
