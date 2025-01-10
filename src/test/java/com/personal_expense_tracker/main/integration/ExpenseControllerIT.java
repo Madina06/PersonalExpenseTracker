@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ExpenseIntegrationTest {
+public class ExpenseControllerIT {
 
     private static final PostgreSQLContainer<?> postgresContainer =
             new PostgreSQLContainer<>("postgres:15")
