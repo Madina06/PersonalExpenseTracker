@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ExpenseView extends JFrame {
 
-    JTable expenseTable;
+    public JTable expenseTable;
     JButton addExpenseButton;
     JButton updateExpenseButton;
     JButton deleteExpenseButton;
@@ -104,4 +104,5 @@ public class ExpenseView extends JFrame {
             JOptionPane.showMessageDialog(this, "Failed to load expenses: " + e.getMessage());
         }
     }
+
 }
