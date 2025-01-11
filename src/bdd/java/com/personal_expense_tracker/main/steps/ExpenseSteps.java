@@ -4,6 +4,7 @@ import com.personal_expense_tracker.main.controller.ExpenseController;
 import com.personal_expense_tracker.main.model.Expense;
 import com.personal_expense_tracker.main.repository.ExpenseRepository;
 import com.personal_expense_tracker.main.utils.DatabaseConnection;
+<<<<<<< HEAD
 import io.cucumber.java.en.*;
 
 import java.sql.Connection;
@@ -11,6 +12,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 import static org.junit.jupiter.api.Assertions.*;
+=======
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+
+import java.sql.Connection;
+import java.time.LocalDate;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+>>>>>>> e687ff36ab336505696307c5089eaf0e26b660ba
 
 public class ExpenseSteps {
 
@@ -25,6 +37,7 @@ public class ExpenseSteps {
         expenseController = new ExpenseController(expenseRepository);
     }
 
+<<<<<<< HEAD
     @Given("I add an expense with description {string}, amount {string}, category {string}, and date {string}")
     public void iAddAnExpenseWithDescriptionAmountCategoryAndDate(String description, String amountStr, String category, String date) {
         try {
@@ -49,6 +62,18 @@ public class ExpenseSteps {
 
 
 
+=======
+    @When("I add an expense with description {string}, amount {string}, category {string}, and date {string}")
+    public void iAddAnExpenseWithDescriptionAmountCategoryAndDate(String description, String amount, String category, String date) {
+        expense = new Expense();
+        expense.setDescription(description);
+        expense.setAmount(Double.parseDouble(amount));
+        expense.setCategory(category);
+        expense.setDate(LocalDate.parse(date));
+        expenseController.addExpense(expense);
+    }
+
+>>>>>>> e687ff36ab336505696307c5089eaf0e26b660ba
     @Then("the expense should be added to the database")
     public void theExpenseShouldBeAddedToTheDatabase() {
         Expense fetchedExpense = expenseController.getAllExpenses().get(0);
@@ -56,6 +81,10 @@ public class ExpenseSteps {
         assertEquals(expense.getDescription(), fetchedExpense.getDescription());
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> e687ff36ab336505696307c5089eaf0e26b660ba
     @Given("an expense with description {string} exists in the database")
     public void anExpenseExistsInTheDatabase(String description) {
         expense = new Expense();
@@ -78,6 +107,7 @@ public class ExpenseSteps {
         assertEquals(expense.getDescription(), fetchedExpense.getDescription());
     }
 
+<<<<<<< HEAD
     @When("I delete the expense")
     public void iDeleteTheExpense() {
         expenseController.deleteExpense(expense.getId());
@@ -87,4 +117,7 @@ public class ExpenseSteps {
     public void theExpenseShouldBeRemovedFromTheDatabase() {
         assertTrue(expenseController.getAllExpenses().isEmpty());
     }
+=======
+
+>>>>>>> e687ff36ab336505696307c5089eaf0e26b660ba
 }
