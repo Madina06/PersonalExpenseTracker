@@ -81,8 +81,7 @@
 		</dependency>
 
     </dependencies>
-    
-    
+   
     
     
 
@@ -119,6 +118,76 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>build-helper-maven-plugin</artifactId>
+			    <version>3.0.0</version>
+			    <executions>
+			        <execution>
+			            <id>add-test-source</id>
+			            <phase>generate-test-sources</phase>
+			            <goals>
+			                <goal>add-test-source</goal>
+			            </goals>
+			            <configuration>
+			                <sources>
+			                    <source>src/it/java</source>
+			                    <source>src/bdd/java</source>
+			                </sources>
+			            </configuration>
+			        </execution>
+			        <execution>
+			            <id>add-test-resource</id>
+			            <phase>generate-test-resources</phase>
+			            <goals>
+			                <goal>add-test-resource</goal>
+			            </goals>
+			            <configuration>
+			                <resources>
+			                    <resource>
+			                        <directory>src/it/resources</directory>
+			                    </resource>
+			                    <resource>
+			                        <directory>src/bdd/resources</directory>
+			                    </resource>
+			                </resources>
+			            </configuration>
+			        </execution>
+    			</executions>
+			</plugin>
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-failsafe-plugin</artifactId>
+			    <version>3.0.0-M5</version>
+			    <executions>
+			        <!-- Настройка для интеграционных тестов -->
+			        <execution>
+			            <id>default-it</id>
+			            <goals>
+			                <goal>integration-test</goal>
+			                <goal>verify</goal>
+			            </goals>
+			        </execution>
+			        <!-- Настройка для BDD тестов -->
+			        <execution>
+			            <id>bdd-tests</id>
+			            <goals>
+			                <goal>integration-test</goal>
+			                <goal>verify</goal>
+			            </goals>
+			            <configuration>
+			                <excludes>
+			                    <exclude>**/*IT.java</exclude>
+			                </excludes>
+			                <includes>
+			                    <include>**/*BDD.java</include>
+			                </includes>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
         </plugins>
     </build>
 </project>
