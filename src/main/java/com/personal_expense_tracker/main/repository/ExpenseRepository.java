@@ -51,6 +51,7 @@ public class ExpenseRepository {
             stmt.setDate(4, Date.valueOf(expense.getDate()));
             stmt.setInt(5, expense.getId());
             stmt.executeUpdate();
+
         }
     }
 
