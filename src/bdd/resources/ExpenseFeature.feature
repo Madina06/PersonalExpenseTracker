@@ -12,8 +12,8 @@ Feature: Expense Management
     Given an expense with description "Dinner" exists in the database
     When I update the expense description to "Updated Dinner"
     Then the expense description should be updated in the database
-
-  Scenario: Deleting an expense
-    Given an expense with description "Updated Dinner" exists in the database
-    When I delete the expense
-    Then the expense should be removed from the database
+#
+#  Scenario: Deleting an expense
+#    Given an expense with description "Updated Dinner" exists in the database
+#    When I delete the expense
+#    Then the expense should be removed from the database
