@@ -24,7 +24,15 @@ public class MainUI extends JFrame {
         setLayout(new GridLayout(1, 1));
 
         // Controllers
-        expenseController = new ExpenseController(new ExpenseRepository(connection));
+        ExpenseRepository expenseRepository = new ExpenseRepository(connection);
+        expenseController = new ExpenseController(expenseRepository);
+        
+        try {
+            expenseRepository.createTableIfNotExists();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to initialize database: " + e.getMessage());
+            System.exit(1); // Завершаем приложение, если база данных не инициализируется
+        }
 
         // Buttons
         manageExpensesButton = new JButton("Manage Expenses");

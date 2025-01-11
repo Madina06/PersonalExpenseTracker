@@ -12,6 +12,18 @@ public class ExpenseRepository {
     public ExpenseRepository(Connection connection) {
         this.connection = connection;
     }
+    
+    public void createTableIfNotExists() throws SQLException {
+        String sql = "CREATE TABLE IF NOT EXISTS expenses (" +
+                     "id SERIAL PRIMARY KEY, " +
+                     "description TEXT, " +
+                     "category VARCHAR(100) NOT NULL, " +
+                     "amount DECIMAL(10, 2) NOT NULL, " +
+                     "date DATE NOT NULL)";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(sql);
+        }
+    }
 
     public void saveExpense(Expense expense) throws SQLException {
         String sql = "INSERT INTO Expenses (description, category, amount, date) VALUES (?, ?, ?, ?)";
