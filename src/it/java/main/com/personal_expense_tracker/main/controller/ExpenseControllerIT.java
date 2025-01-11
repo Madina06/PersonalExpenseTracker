@@ -1,4 +1,4 @@
-package com.personal_expense_tracker.main.integration;
+package main.com.personal_expense_tracker.main.controller;
 
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;

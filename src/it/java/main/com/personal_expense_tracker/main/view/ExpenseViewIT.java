@@ -1,4 +1,4 @@
-package com.personal_expense_tracker.main.integration;
+package main.com.personal_expense_tracker.main.view;
 
 import com.personal_expense_tracker.main.controller.ExpenseController;
 import com.personal_expense_tracker.main.model.Expense;

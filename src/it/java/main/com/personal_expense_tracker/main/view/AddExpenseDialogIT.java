@@ -1,4 +1,4 @@
-package com.personal_expense_tracker.main.integration;
+package main.com.personal_expense_tracker.main.view;
 
 import com.personal_expense_tracker.main.controller.ExpenseController;
 import com.personal_expense_tracker.main.model.Expense;
@@ -8,7 +8,6 @@ import com.personal_expense_tracker.main.view.ExpenseView;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
 import java.sql.DriverManager;
