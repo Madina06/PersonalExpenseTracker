@@ -61,7 +61,7 @@ public class ExpenseViewIT {
         }
         
         // Initialize repository, controller, and view
-        ExpenseRepository expenseRepository = new ExpenseRepository(connection);
+        expenseRepository = new ExpenseRepository(connection);
         expenseController = new ExpenseController(expenseRepository);
         expenseView = new ExpenseView(expenseController);
     }
