@@ -1,6 +1,7 @@
 # Eclipse-specific files
 .project
 .settings/
+.idea
 
 # Maven-specific files
 target/
