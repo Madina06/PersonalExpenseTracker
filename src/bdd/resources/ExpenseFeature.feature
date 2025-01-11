@@ -9,7 +9,8 @@ Feature: Expense Management
     Then the expense should be added to the database
 
   Scenario: Updating an expense
-    Given an expense with description "Dinner" exists in the database
+    Given the application is running
+    And an expense with description "Dinner" exists in the database
     When I update the expense description to "Updated Dinner"
     Then the expense description should be updated in the database
 
