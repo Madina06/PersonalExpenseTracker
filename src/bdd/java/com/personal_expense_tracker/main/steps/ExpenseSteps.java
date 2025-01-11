@@ -9,6 +9,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.sql.Connection;
+import java.sql.Statement;
 import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
@@ -20,9 +21,17 @@ public class ExpenseSteps {
     private ExpenseController expenseController;
     private Expense expense;
 
+    public void cleanDatabase() throws Exception {
+        connection = DatabaseConnection.connect();
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("DELETE FROM expenses");
+        }
+    }
+
     @Given("the application is running")
     public void theApplicationIsRunning() throws Exception {
         connection = DatabaseConnection.connect();
+        cleanDatabase();
         ExpenseRepository expenseRepository = new ExpenseRepository(connection);
         expenseController = new ExpenseController(expenseRepository);
     }
@@ -48,8 +57,9 @@ public class ExpenseSteps {
     @Given("an expense with description {string} exists in the database")
     public void anExpenseExistsInTheDatabase(String description) {
         expense = new Expense();
+        expense.setId(1);
         expense.setDescription(description);
-        expense.setAmount(50.0);
+        expense.setAmount(51.0);
         expense.setCategory("Food");
         expense.setDate(LocalDate.of(2023, 5, 1));
         expenseController.addExpense(expense);
@@ -57,13 +67,20 @@ public class ExpenseSteps {
 
     @When("I update the expense description to {string}")
     public void iUpdateTheExpenseDescription(String newDescription) {
+        expense = expenseController.getAllExpenses().stream()
+                .findFirst()
+                .orElse(null);
+        assertNotNull(expense);
         expense.setDescription(newDescription);
         expenseController.updateExpense(expense);
     }
 
     @Then("the expense description should be updated in the database")
     public void theExpenseDescriptionShouldBeUpdatedInTheDatabase() {
-        Expense fetchedExpense = expenseController.getAllExpenses().get(0);
+        Expense fetchedExpense = expenseController.getAllExpenses().stream()
+                .findFirst()
+                .orElse(null);
+        assertNotNull(fetchedExpense);
         assertEquals(expense.getDescription(), fetchedExpense.getDescription());
     }
 
