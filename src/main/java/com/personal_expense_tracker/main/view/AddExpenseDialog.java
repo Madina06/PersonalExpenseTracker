@@ -14,6 +14,7 @@ public class AddExpenseDialog extends JDialog {
     private JTextField categoryField;
     private JTextField dateField;
     private JButton saveButton;
+    private JButton cancelButton;
 
     private final ExpenseController expenseController;
     private final ExpenseView parentView;
@@ -29,8 +30,10 @@ public class AddExpenseDialog extends JDialog {
         this.existingExpense = existingExpense;
 
         setTitle(existingExpense == null ? "Add Expense" : "Update Expense");
+        setName(existingExpense == null ? "Add Expense" : "Update Expense");
         setSize(400, 300);
-        setLayout(new GridLayout(5, 2));
+        setLocationRelativeTo(parentView);
+        setLayout(new GridLayout(5, 2, 10, 10));
 
         add(new JLabel("Description:"));
         descriptionField = new JTextField(existingExpense != null ? existingExpense.getDescription() : "");
@@ -50,7 +53,12 @@ public class AddExpenseDialog extends JDialog {
         add(dateField);
 
         saveButton = new JButton("Save");
+        saveButton.setBackground(new Color(76, 175, 80));
         add(saveButton);
+
+        cancelButton = new JButton("Cancel");
+        cancelButton.setBackground(Color.GRAY);
+        add(cancelButton);
 
         saveButton.addActionListener(e -> {
             try {
@@ -103,9 +111,12 @@ public class AddExpenseDialog extends JDialog {
                 JOptionPane.showMessageDialog(this, "Failed to save expense: " + ex.getMessage());
             }
         });
+        cancelButton.addActionListener(e -> {
+            dispose();
+        });
 
     }
-    
+
     public JTextField getDescriptionField() {
         return descriptionField;
     }
