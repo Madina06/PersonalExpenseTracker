@@ -37,8 +37,8 @@ public class PostgresSteps {
         }
     }
 
-    @Given("The database contains a few orders")
-    public void the_database_contains_a_few_orders() {
+    @Given("The database contains a few expenses")
+    public void the_database_contains_a_few_expenses() {
         addTestExpenseToDatabase(EXPENSE_FIXTURE_1_ID, EXPENSE_FIXTURE_1_DESCRIPTION,
                 EXPENSE_FIXTURE_1_AMOUNT, EXPENSE_FIXTURE_1_CATEGORY, EXPENSE_FIXTURE_1_DATE);
         addTestExpenseToDatabase(EXPENSE_FIXTURE_2_ID, EXPENSE_FIXTURE_2_DESCRIPTION,
