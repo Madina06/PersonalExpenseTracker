@@ -10,16 +10,11 @@ import org.assertj.swing.fixture.FrameFixture;
 
 import javax.swing.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
 public class ExpenseSteps {
 
-//    private Connection connection;
+    //    private Connection connection;
 //    private ExpenseController expenseController;
 //    private Expense expense;
 //
@@ -30,6 +25,7 @@ public class ExpenseSteps {
 //        }
 //    }
 
+
     private FrameFixture window;
 
     @After
@@ -39,34 +35,19 @@ public class ExpenseSteps {
         }
     }
 
-    @When("The Expense View is shown")
-    public void the_Expense_View_is_shown() {
-        application("com.personal_expense_tracker.main.view.MainUI")
+    @When("The Personal Expense Tracker is shown")
+    public void the_Personal_Expense_Tracker_is_shown() {
+        application("com.personal_expense_tracker.main.App")
                 .start();
         window = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
             @Override
             protected boolean isMatching(JFrame frame) {
-                return "Personal Expense Tracker".equals(frame.getTitle()) && frame.isShowing();
+                return "Manage Expenses".equals(frame.getTitle()) && frame.isShowing();
             }
         }).using(BasicRobot.robotWithCurrentAwtHierarchy());
     }
 
-    @Then("The displayed expenses should match the expenses in the database")
-    public void the_displayed_expenses_should_match_the_expenses_in_the_database() {
-        List<String> expectedExpenses = Arrays.asList(
-                "ID: 100    Customer: Customer A    Company: Company A    Product: Product A    Status: Pending",
-                "ID: 200    Customer: Customer B    Company: Company B    Product: Product A    Status: Pending");
 
-        List<String> displayedOrders = new ArrayList<>();
-
-        for (int i = 0; i < window.list("listAllOrders").contents().length; i++) {
-            String orderHtml = window.list("listAllOrders").contents()[i];
-            String cleanedOrder = orderHtml.replaceAll("<.*?>", "").replaceAll("\\s+", " ").replace("&nbsp;", " ");
-            displayedOrders.add(cleanedOrder.trim());
-        }
-
-        assertThat(displayedOrders).containsExactlyElementsOf(expectedExpenses);
-    }
 
 
 //    @Given("the application is running")

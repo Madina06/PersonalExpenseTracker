@@ -1,26 +1,9 @@
-Feature: Expense Management
-  As a user
+Feature: Manage Expenses
+  As a User
   I want to manage my expenses
-  So that I can track my personal finances
-  Background:
-    Given The database contains a few expenses
+  So that I can keep track of my financial transactions effectively
 
-  Scenario: Displaying expenses
-    When The Expense View is shown
-    Then The displayed expenses should match the expenses in the database
-
-#  Scenario: Adding an expense
-#    Given the application is running
-#    When I add an expense with description "Dinner", amount "50.0", category "Food", and date "2024-05-01"
-#    Then the expense should be added to the database
-#
-#  Scenario: Updating an expense
-#    Given the application is running
-#    And an expense with description "Dinner" exists in the database
-#    When I update the expense description to "Updated Dinner"
-#    Then the expense description should be updated in the database
-#
-#  Scenario: Deleting an expense
-#    Given an expense with description "Updated Dinner" exists in the database
-#    When I delete the expense
-#    Then the expense should be removed from the database
+Scenario:
+  Scenario: Displaying Expenses
+    When The Personal Expense Tracker is shown
+    Then The displayed expenses is empty

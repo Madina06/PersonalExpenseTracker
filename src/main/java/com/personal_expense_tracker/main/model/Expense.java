@@ -10,6 +10,17 @@ public class Expense {
     private double amount;
     private LocalDate date;
 
+    public Expense(int id, String description, String category, double amount, LocalDate date) {
+        this.id = id;
+        this.description = description;
+        this.category = category;
+        this.amount = amount;
+        this.date = date;
+    }
+
+    public Expense() {
+    }
+
     public int getId() {
         return id;
     }
@@ -60,16 +71,16 @@ public class Expense {
                 ", date=" + date +
                 '}';
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Expense expense = (Expense) o;
         return Double.compare(expense.amount, amount) == 0 &&
-               Objects.equals(description, expense.description) &&
-               Objects.equals(category, expense.category) &&
-               Objects.equals(date, expense.date);
+                Objects.equals(description, expense.description) &&
+                Objects.equals(category, expense.category) &&
+                Objects.equals(date, expense.date);
     }
 
     @Override
