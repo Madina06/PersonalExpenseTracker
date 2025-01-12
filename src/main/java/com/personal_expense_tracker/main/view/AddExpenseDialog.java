@@ -34,6 +34,7 @@ public class AddExpenseDialog extends JDialog {
 
         add(new JLabel("Description:"));
         descriptionField = new JTextField(existingExpense != null ? existingExpense.getDescription() : "");
+        descriptionField.setName("descriptionTextField");
         add(descriptionField);
 
         add(new JLabel("Amount:"));

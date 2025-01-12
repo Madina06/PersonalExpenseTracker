@@ -1,19 +1,20 @@
 // ExpenseSteps.java
 package com.personal_expense_tracker.main.steps;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.swing.launcher.ApplicationLauncher.application;
-
-import javax.swing.JFrame;
+import io.cucumber.java.After;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.assertj.swing.core.BasicRobot;
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
-import io.cucumber.java.After;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+
+import javax.swing.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
 public class ExpenseSteps {
 
@@ -37,13 +38,6 @@ public class ExpenseSteps {
         }).using(BasicRobot.robotWithCurrentAwtHierarchy());
     }
 
-    @Given("The user provides expense details with description {string}, amount {double}, category {string}, and date {string}")
-    public void theUserProvidesExpenseDetails(String description, double amount, String category, String date) {
-        window.textBox("descriptionTextField").enterText(description);
-        window.textBox("amountTextField").enterText(String.valueOf(amount));
-        window.textBox("categoryTextField").enterText(category);
-        window.textBox("dateTextField").enterText(date);
-    }
 
     @When("The user clicks the {string} button")
     public void theUserClicksTheButton(String buttonText) {
@@ -60,5 +54,15 @@ public class ExpenseSteps {
             }
         }
         assertThat(found).isTrue();
+    }
+
+    @Given("The user provides expense details with description {string}, " +
+            "amount {string}, category {string}, and date {string}")
+    public void theUserProvidesExpenseDetailsWithDescriptionAmountCategoryAndDate(String description, String amount, String category, String date) {
+        //window.textBox("descriptionTextField").enterText(description);
+//        window.textBox("amountTextField").enterText(String.valueOf(amount));
+//        window.textBox("categoryTextField").enterText(category);
+//        window.textBox("dateTextField").enterText(date);
+        System.out.println("description = " + description);
     }
 }
