@@ -42,14 +42,17 @@ public class AddExpenseDialog extends JDialog {
 
         add(new JLabel("Amount:"));
         amountField = new JTextField(existingExpense != null ? String.valueOf(existingExpense.getAmount()) : "");
+        amountField.setName("amountTextField");
         add(amountField);
 
         add(new JLabel("Category:"));
         categoryField = new JTextField(existingExpense != null ? existingExpense.getCategory() : "");
+        categoryField.setName("categoryTextField");
         add(categoryField);
 
         add(new JLabel("Date (YYYY-MM-DD):"));
         dateField = new JTextField(existingExpense != null ? existingExpense.getDate().toString() : "");
+        dateField.setName("dateField");
         add(dateField);
 
         saveButton = new JButton("Save");
