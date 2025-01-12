@@ -1,9 +1,12 @@
-Feature: Manage Expenses
-  As a User
-  I want to manage my expenses
-  So that I can keep track of my financial transactions effectively
+Feature: Expense Management
 
-Scenario:
-  Scenario: Displaying Expenses
-    When The Personal Expense Tracker is shown
-    Then The displayed expenses is empty
+  Background:
+    Given The database contains a few expenses
+
+  Scenario: Adding an expense
+    When The Expense View is shown
+    Given The user provides expense details with description "Lunch", amount "50.0", category "Food", and date "2023-12-01"
+    When The user clicks the "Add Expense" button
+    Then The expense with description "Lunch" should be added to the database
+    And The displayed expenses should include the added expense
+

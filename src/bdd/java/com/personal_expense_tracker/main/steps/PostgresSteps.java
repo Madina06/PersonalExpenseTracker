@@ -1,9 +1,13 @@
+// PostgresSteps.java
 package com.personal_expense_tracker.main.steps;
 
 import com.personal_expense_tracker.main.model.Expense;
 import com.personal_expense_tracker.main.repository.ExpenseRepository;
 import com.personal_expense_tracker.main.utils.DatabaseConnection;
+
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
 import java.sql.Connection;
@@ -19,18 +23,6 @@ public class PostgresSteps {
     private Connection connection;
     private ExpenseRepository expenseRepository;
 
-    static final int EXPENSE_FIXTURE_1_ID = 100;
-    static final String EXPENSE_FIXTURE_1_DESCRIPTION = "Description A";
-    static final double EXPENSE_FIXTURE_1_AMOUNT = 100.0;
-    static final String EXPENSE_FIXTURE_1_CATEGORY = "Category A";
-    static final String EXPENSE_FIXTURE_1_DATE = "2025-01-11";
-
-    static final int EXPENSE_FIXTURE_2_ID = 200;
-    static final String EXPENSE_FIXTURE_2_DESCRIPTION = "Description B";
-    static final double EXPENSE_FIXTURE_2_AMOUNT = 200.0;
-    static final String EXPENSE_FIXTURE_2_CATEGORY = "Category B";
-    static final String EXPENSE_FIXTURE_2_DATE = "2025-01-12";
-
     @Before
     public void setUp() throws SQLException {
         connection = DatabaseConnection.connect();
@@ -39,30 +31,37 @@ public class PostgresSteps {
             stmt.execute("DELETE FROM expenses");
         }
     }
-
-    @Then("The displayed expenses is empty")
-    public void theDisplayedExpensesIsEmpty() throws SQLException {
-        ExpenseRepository expenseRepository = new ExpenseRepository(connection);
-        List<Expense> allExpenses = expenseRepository.getAllExpenses();
-        assertThat(allExpenses).size().isEqualTo(0);
+    
+    @After
+    public void tearDown() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
     }
 
-//    @Given("The database contains a few expenses")
-//    public void the_database_contains_a_few_expenses() {
-//        addTestExpenseToDatabase(EXPENSE_FIXTURE_1_ID, EXPENSE_FIXTURE_1_DESCRIPTION,
-//                EXPENSE_FIXTURE_1_AMOUNT, EXPENSE_FIXTURE_1_CATEGORY, EXPENSE_FIXTURE_1_DATE);
-//        addTestExpenseToDatabase(EXPENSE_FIXTURE_2_ID, EXPENSE_FIXTURE_2_DESCRIPTION,
-//                EXPENSE_FIXTURE_2_AMOUNT, EXPENSE_FIXTURE_2_CATEGORY, EXPENSE_FIXTURE_2_DATE);
-//    }
+    @Given("The database contains a few expenses")
+    public void theDatabaseContainsAFewExpenses() {
+        addTestExpenseToDatabase("Lunch", 50.0, "Food", "2023-12-01");
+        addTestExpenseToDatabase("Updated Lunch", 60.0, "Food", "2023-12-02");
+    }
 
-    private void addTestExpenseToDatabase(int id,
-                                          String description,
-                                          double amount,
-                                          String category,
-                                          String date) {
+    @Then("The expense with description {string} should be added to the database")
+    public void theExpenseShouldBeAddedToTheDatabase(String description) throws SQLException {
+        List<Expense> expenses = expenseRepository.getAllExpenses();
+        boolean found = expenses.stream().anyMatch(exp -> exp.getDescription().equals(description));
+        assertThat(found).isTrue();
+    }
+
+    @Then("The expense with description {string} should be removed from the database")
+    public void theExpenseShouldBeRemovedFromTheDatabase(String description) throws SQLException {
+        List<Expense> expenses = expenseRepository.getAllExpenses();
+        boolean found = expenses.stream().anyMatch(exp -> exp.getDescription().equals(description));
+        assertThat(found).isFalse();
+    }
+
+    private void addTestExpenseToDatabase(String description, double amount, String category, String date) {
         try {
             Expense expense = new Expense();
-            expense.setId(id);
             expense.setDescription(description);
             expense.setAmount(amount);
             expense.setCategory(category);
@@ -71,6 +70,5 @@ public class PostgresSteps {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
