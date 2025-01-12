@@ -167,14 +167,14 @@ public class ExpenseViewIT {
         // Arrange: Add multiple expenses
         Expense expense1 = new Expense();
         expense1.setDescription("Expense 1");
-        expense1.setCategory("Category 1");
+        expense1.setCategory("Groceries");
         expense1.setAmount(100.0);
         expense1.setDate(java.time.LocalDate.of(2023, 1, 1));
         expenseController.addExpense(expense1);
 
         Expense expense2 = new Expense();
         expense2.setDescription("Expense 2");
-        expense2.setCategory("Category 2");
+        expense2.setCategory("Utilities");
         expense2.setAmount(200.0);
         expense2.setDate(java.time.LocalDate.of(2023, 2, 1));
         expenseController.addExpense(expense2);
@@ -188,13 +188,13 @@ public class ExpenseViewIT {
 
         // Check first row
         assertEquals("Expense 1", tableModel.getValueAt(0, 1));
-        assertEquals("Category 1", tableModel.getValueAt(0, 2));
+        assertEquals("Groceries", tableModel.getValueAt(0, 2));
         assertEquals(100.0, tableModel.getValueAt(0, 3));
         assertEquals("2023-01-01", tableModel.getValueAt(0, 4).toString());
 
         // Check second row
         assertEquals("Expense 2", tableModel.getValueAt(1, 1));
-        assertEquals("Category 2", tableModel.getValueAt(1, 2));
+        assertEquals("Utilities", tableModel.getValueAt(1, 2));
         assertEquals(200.0, tableModel.getValueAt(1, 3));
         assertEquals("2023-02-01", tableModel.getValueAt(1, 4).toString());
     }

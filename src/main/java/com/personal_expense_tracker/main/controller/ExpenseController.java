@@ -60,6 +60,9 @@ public class ExpenseController {
         if (expense.getCategory() == null || expense.getCategory().isEmpty()) {
             throw new IllegalArgumentException("Category cannot be null or empty.");
         }
+        if (expense.getCategory().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("Category cannot contain numeric values.");
+        }
         if (expense.getAmount() <= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero.");
         }

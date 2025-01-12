@@ -80,12 +80,6 @@
 		    <scope>test</scope>
 		</dependency>
 		
-		<dependency>
-		    <groupId>io.cucumber</groupId>
-		    <artifactId>cucumber-spring</artifactId>
-		    <version>7.11.0</version>
-		    <scope>test</scope>
-		</dependency>
 		
 		<dependency>
 	        <groupId>org.assertj</groupId>
