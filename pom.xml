@@ -107,24 +107,44 @@
 
             <!-- JaCoCo Maven Plugin -->
             <plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.6</version>
-					<configuration>
-						<excludes>
-							<exclude>**/model/*.*</exclude>
-							<exclude>**/App.*</exclude>
-						</excludes>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>prepare-agent</goal>
-								<goal>report</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.6</version>
+				<configuration>
+					<excludes>
+						<exclude>**/model/*.*</exclude>
+						<exclude>**/App.*</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+			    <groupId>org.pitest</groupId>
+			    <artifactId>pitest-maven</artifactId>
+			    <version>1.14.1</version>
+			    <configuration>
+			        <targetClasses>
+			            <param>com.personal_expense_tracker.main.controller.*</param>
+			            <param>com.personal_expense_tracker.main.repository.*</param>
+			        </targetClasses>
+			        <targetTests>
+			            <param>com.personal_expense_tracker.main.controller.*</param>
+			            <param>com.personal_expense_tracker.main.repository.*</param>			           
+			        </targetTests>
+			        <mutators>
+			            <mutator>STRONGER</mutator>
+			        </mutators>
+			    </configuration>
+			</plugin>
+
             
             <plugin>
 			    <groupId>org.codehaus.mojo</groupId>
@@ -195,7 +215,69 @@
 			        </execution>
 			    </executions>
 			</plugin>
+			
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.42.1</version>
+				<configuration>
+					<images>
+						<image>
+							<name>postgres:latest</name>
+							<run>
+								<ports>
+									<port>5433:5432</port>
+								</ports>
+								<env>
+									<POSTGRES_USER>madina</POSTGRES_USER>
+									<POSTGRES_PASSWORD>m123</POSTGRES_PASSWORD>
+									<POSTGRES_DB>expensedb</POSTGRES_DB>
+								</env>
+							</run>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>docker-start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>docker-stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
         </plugins>
     </build>
+    
+    <profiles>
+    	<profile>
+		    <id>mutation-testing</id>
+		    <build>
+		        <plugins>
+		            <plugin>
+		                <groupId>org.pitest</groupId>
+		                <artifactId>pitest-maven</artifactId>
+		                <executions>
+		                    <execution>
+		                        <phase>verify</phase>
+		                        <goals>
+		                            <goal>mutationCoverage</goal>
+		                        </goals>
+		                    </execution>
+		                </executions>
+		            </plugin>
+		        </plugins>
+		    </build>
+		</profile>
+
+    </profiles>
 </project>

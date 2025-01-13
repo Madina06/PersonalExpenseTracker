@@ -43,14 +43,18 @@ public class ExpenseController {
         }
     }
 
-    // Delete an expense by ID
+ // Delete an expense by ID
     public void deleteExpense(int expenseId) {
+        if (expenseId <= 0) {
+            throw new IllegalArgumentException("Expense ID must be greater than 0");
+        }
         try {
             expenseRepository.deleteExpense(expenseId);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete expense: " + e.getMessage(), e);
         }
     }
+
 
     // Validate expense data
     private void validateExpense(Expense expense) throws IllegalArgumentException {

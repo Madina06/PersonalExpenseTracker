@@ -27,8 +27,9 @@ public class PostgresSteps {
     public void setUp() throws SQLException {
         connection = DatabaseConnection.connect();
         expenseRepository = new ExpenseRepository(connection);
+        expenseRepository.createTableIfNotExists();
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM expenses");
+            stmt.execute("DELETE FROM expenses");	
         }
     }
     

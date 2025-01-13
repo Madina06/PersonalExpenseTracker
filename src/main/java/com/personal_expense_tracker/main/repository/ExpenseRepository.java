@@ -16,8 +16,8 @@ public class ExpenseRepository {
     public void createTableIfNotExists() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS expenses (" +
                      "id SERIAL PRIMARY KEY, " +
-                     "description TEXT, " +
-                     "category VARCHAR(100) NOT NULL, " +
+                     "description TEXT NOT NULL, " +
+                     "category VARCHAR(100) NOT NULL CHECK (category <> ''), " +
                      "amount DECIMAL(10, 2) NOT NULL, " +
                      "date DATE NOT NULL)";
         try (Statement stmt = connection.createStatement()) {

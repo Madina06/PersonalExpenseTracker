@@ -55,7 +55,7 @@ public class ExpenseViewIT {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS Expenses (" +
                     "id SERIAL PRIMARY KEY, " +
-                    "description TEXT, " +
+                    "description TEXT NOT NULL, " +
                     "category VARCHAR(100) NOT NULL, " +
                     "amount DECIMAL(10, 2) NOT NULL, " +
                     "date DATE NOT NULL)");

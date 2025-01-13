@@ -7,9 +7,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -29,7 +29,7 @@ public class ExpenseControllerTest {
     }
 
     @Test
-    public void testAddExpense() throws Exception {
+    public void testAddExpense_ValidExpense() throws Exception {
         // Arrange
         Expense expense = new Expense();
         expense.setDescription("Lunch");
@@ -47,17 +47,95 @@ public class ExpenseControllerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddExpenseInvalid() {
-        // Arrange
-        Expense expense = new Expense(); // Missing required fields
+    public void testAddExpense_NullDescription() {
+        Expense expense = new Expense();
+        expense.setDescription(null);
+        expense.setCategory("Food");
+        expense.setAmount(15.0);
+        expense.setDate(LocalDate.now());
 
-        // Act
+        expenseController.addExpense(expense);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddExpense_EmptyDescription() {
+        Expense expense = new Expense();
+        expense.setDescription("");
+        expense.setCategory("Food");
+        expense.setAmount(15.0);
+        expense.setDate(LocalDate.now());
+
+        expenseController.addExpense(expense);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddExpense_NullCategory() {
+        Expense expense = new Expense();
+        expense.setDescription("Lunch");
+        expense.setCategory(null);
+        expense.setAmount(15.0);
+        expense.setDate(LocalDate.now());
+
+        expenseController.addExpense(expense);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddExpense_EmptyCategory() {
+        Expense expense = new Expense();
+        expense.setDescription("Lunch");
+        expense.setCategory("");
+        expense.setAmount(15.0);
+        expense.setDate(LocalDate.now());
+
+        expenseController.addExpense(expense);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddExpense_CategoryWithNumbers() {
+        Expense expense = new Expense();
+        expense.setDescription("Lunch");
+        expense.setCategory("123Food");
+        expense.setAmount(15.0);
+        expense.setDate(LocalDate.now());
+
+        expenseController.addExpense(expense);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddExpense_NegativeAmount() {
+        Expense expense = new Expense();
+        expense.setDescription("Lunch");
+        expense.setCategory("Food");
+        expense.setAmount(-15.0);
+        expense.setDate(LocalDate.now());
+
+        expenseController.addExpense(expense);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddExpense_ZeroAmount() {
+        Expense expense = new Expense();
+        expense.setDescription("Lunch");
+        expense.setCategory("Food");
+        expense.setAmount(0.0);
+        expense.setDate(LocalDate.now());
+
+        expenseController.addExpense(expense);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddExpense_NullDate() {
+        Expense expense = new Expense();
+        expense.setDescription("Lunch");
+        expense.setCategory("Food");
+        expense.setAmount(15.0);
+        expense.setDate(null);
+
         expenseController.addExpense(expense);
     }
 
     @Test
-    public void testGetAllExpenses() throws Exception {
-        // Arrange
+    public void testGetAllExpenses_ValidData() throws Exception {
         Expense expense1 = new Expense();
         expense1.setDescription("Lunch");
         expense1.setCategory("Food");
@@ -73,10 +151,8 @@ public class ExpenseControllerTest {
         List<Expense> mockExpenses = Arrays.asList(expense1, expense2);
         when(mockExpenseRepository.getAllExpenses()).thenReturn(mockExpenses);
 
-        // Act
         List<Expense> result = expenseController.getAllExpenses();
 
-        // Assert
         assertEquals(2, result.size());
         assertEquals("Lunch", result.get(0).getDescription());
         assertEquals("Taxi", result.get(1).getDescription());
@@ -84,26 +160,45 @@ public class ExpenseControllerTest {
     }
 
     @Test
-    public void testUpdateExpense() throws Exception {
-        // Arrange
+    public void testGetAllExpenses_NoData() throws Exception {
+        when(mockExpenseRepository.getAllExpenses()).thenReturn(Collections.emptyList());
+
+        List<Expense> result = expenseController.getAllExpenses();
+
+        assertTrue(result.isEmpty());
+        verify(mockExpenseRepository, times(1)).getAllExpenses();
+    }
+
+    @Test
+    public void testUpdateExpense_ValidExpense() throws Exception {
         Expense expense = new Expense();
         expense.setId(1);
-        expense.setDescription("Lunch Updated");
+        expense.setDescription("Updated Lunch");
         expense.setCategory("Food");
         expense.setAmount(20.0);
         expense.setDate(LocalDate.now());
 
         doNothing().when(mockExpenseRepository).updateExpense(expense);
 
-        // Act
         expenseController.updateExpense(expense);
 
-        // Assert
         verify(mockExpenseRepository, times(1)).updateExpense(expense);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testUpdateExpense_InvalidExpense() {
+        Expense expense = new Expense();
+        expense.setId(1);
+        expense.setDescription("");
+        expense.setCategory("");
+        expense.setAmount(-10.0);
+        expense.setDate(null);
+
+        expenseController.updateExpense(expense);
+    }
+
     @Test
-    public void testDeleteExpense() throws Exception {
+    public void testDeleteExpense_ValidId() throws Exception {
         // Arrange
         int expenseId = 1;
 
@@ -115,4 +210,40 @@ public class ExpenseControllerTest {
         // Assert
         verify(mockExpenseRepository, times(1)).deleteExpense(expenseId);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteExpense_InvalidNegativeId() {
+        expenseController.deleteExpense(-1);
+    }
+
+    @Test
+    public void testDeleteExpense_NonExistentId() throws Exception {
+        int expenseId = 999;
+
+        doNothing().when(mockExpenseRepository).deleteExpense(expenseId);
+
+        expenseController.deleteExpense(expenseId);
+
+        verify(mockExpenseRepository, times(1)).deleteExpense(expenseId);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteExpense_InvalidId_Zero() {
+        // Arrange
+        int expenseId = 0;
+
+        // Act
+        expenseController.deleteExpense(expenseId);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteExpense_InvalidId_Negative() {
+        // Arrange
+        int expenseId = -1;
+
+        // Act
+        expenseController.deleteExpense(expenseId);
+    }
+    
+    
 }
