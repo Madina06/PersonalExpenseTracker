@@ -38,13 +38,15 @@ public class ExpenseRepositoryTest {
     @Test
     public void testCreateTableIfNotExists() throws Exception {
         // Arrange
-        when(mockConnection.createStatement()).thenReturn(mock(Statement.class));
+        Statement mockStatement = mock(Statement.class);
+        when(mockConnection.createStatement()).thenReturn(mockStatement);
 
         // Act
         expenseRepository.createTableIfNotExists();
 
         // Assert
         verify(mockConnection, times(1)).createStatement();
+        verify(mockStatement, times(1)).execute(anyString());
     }
 
     @Test
@@ -65,6 +67,21 @@ public class ExpenseRepositoryTest {
         verify(mockPreparedStatement, times(1)).setDouble(3, 150.0);
         verify(mockPreparedStatement, times(1)).setDate(4, Date.valueOf(LocalDate.now()));
         verify(mockPreparedStatement, times(1)).executeUpdate();
+    }
+
+    @Test(expected = SQLException.class)
+    public void testSaveExpense_ThrowsSQLException() throws Exception {
+        // Arrange
+        Expense expense = new Expense();
+        expense.setDescription("Test Expense");
+        expense.setCategory("Test Category");
+        expense.setAmount(100.0);
+        expense.setDate(LocalDate.now());
+
+        doThrow(SQLException.class).when(mockPreparedStatement).executeUpdate();
+
+        // Act
+        expenseRepository.saveExpense(expense);
     }
 
     @Test
@@ -90,6 +107,18 @@ public class ExpenseRepositoryTest {
     }
 
     @Test
+    public void testGetAllExpenses_NoData() throws Exception {
+        // Arrange
+        when(mockResultSet.next()).thenReturn(false);
+
+        // Act
+        List<Expense> expenses = expenseRepository.getAllExpenses();
+
+        // Assert
+        assertTrue(expenses.isEmpty());
+    }
+
+    @Test
     public void testUpdateExpense() throws Exception {
         // Arrange
         Expense expense = new Expense();
@@ -111,6 +140,23 @@ public class ExpenseRepositoryTest {
         verify(mockPreparedStatement, times(1)).executeUpdate();
     }
 
+    @Test(expected = SQLException.class)
+    public void testUpdateExpense_ThrowsSQLException() throws Exception {
+        // Arrange
+        Expense expense = new Expense();
+        expense.setId(1);
+        expense.setDescription("Invalid Expense");
+        expense.setCategory("Food");
+        expense.setAmount(100.0);
+        expense.setDate(LocalDate.now()); // Убедитесь, что дата задается
+
+        doThrow(SQLException.class).when(mockPreparedStatement).executeUpdate();
+
+        // Act
+        expenseRepository.updateExpense(expense);
+    }
+
+
     @Test
     public void testDeleteExpense() throws Exception {
         // Act
@@ -120,4 +166,52 @@ public class ExpenseRepositoryTest {
         verify(mockPreparedStatement, times(1)).setInt(1, 1);
         verify(mockPreparedStatement, times(1)).executeUpdate();
     }
+
+    @Test(expected = SQLException.class)
+    public void testDeleteExpense_ThrowsSQLException() throws Exception {
+        // Arrange
+        doThrow(SQLException.class).when(mockPreparedStatement).executeUpdate();
+
+        // Act
+        expenseRepository.deleteExpense(1);
+    }
+    
+    @Test
+    public void testSetIdInGetAllExpenses() throws Exception {
+        // Arrange
+        when(mockResultSet.next()).thenReturn(true, false);
+        when(mockResultSet.getInt("id")).thenReturn(42); // Пример ID
+        when(mockResultSet.getString("description")).thenReturn("Test Description");
+        when(mockResultSet.getString("category")).thenReturn("Test Category");
+        when(mockResultSet.getDouble("amount")).thenReturn(123.45);
+        when(mockResultSet.getDate("date")).thenReturn(Date.valueOf(LocalDate.now()));
+
+        // Act
+        List<Expense> expenses = expenseRepository.getAllExpenses();
+
+        // Assert
+        assertEquals(1, expenses.size());
+        assertEquals(42, expenses.get(0).getId()); // Проверка setId
+    }
+    
+    @Test
+    public void testSetDateInGetAllExpenses() throws Exception {
+        // Arrange
+        LocalDate testDate = LocalDate.of(2025, 1, 1);
+        when(mockResultSet.next()).thenReturn(true, false);
+        when(mockResultSet.getInt("id")).thenReturn(1);
+        when(mockResultSet.getString("description")).thenReturn("Test Description");
+        when(mockResultSet.getString("category")).thenReturn("Test Category");
+        when(mockResultSet.getDouble("amount")).thenReturn(100.0);
+        when(mockResultSet.getDate("date")).thenReturn(Date.valueOf(testDate));
+
+        // Act
+        List<Expense> expenses = expenseRepository.getAllExpenses();
+
+        // Assert
+        assertEquals(1, expenses.size());
+        assertEquals(testDate, expenses.get(0).getDate()); // Проверка setDate
+    }
+
+
 }
