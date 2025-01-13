@@ -285,7 +285,7 @@
 							<name>postgres:latest</name>
 							<run>
 								<ports>
-									<port>5433:5432</port>
+									<port>5434:5432</port>
 								</ports>
 								<env>
 									<POSTGRES_USER>madina</POSTGRES_USER>

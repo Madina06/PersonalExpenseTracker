@@ -4,7 +4,6 @@ package com.personal_expense_tracker.main.steps;
 import com.personal_expense_tracker.main.model.Expense;
 import com.personal_expense_tracker.main.repository.ExpenseRepository;
 import com.personal_expense_tracker.main.utils.DatabaseConnection;
-
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -29,10 +28,10 @@ public class PostgresSteps {
         expenseRepository = new ExpenseRepository(connection);
         expenseRepository.createTableIfNotExists();
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM expenses");	
+            stmt.execute("DELETE FROM expenses");
         }
     }
-    
+
     @After
     public void tearDown() throws SQLException {
         if (connection != null && !connection.isClosed()) {
@@ -71,5 +70,10 @@ public class PostgresSteps {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Given("the database contains only one expense")
+    public void theDatabaseContainsTheFollowingExpenses() {
+        addTestExpenseToDatabase("Lunch", 50.0, "Food", "2025-01-01");
     }
 }
