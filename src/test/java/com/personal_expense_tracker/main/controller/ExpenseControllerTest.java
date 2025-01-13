@@ -7,11 +7,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class ExpenseControllerTest {
@@ -28,13 +29,15 @@ public class ExpenseControllerTest {
     }
 
     @Test
-    public void testAddExpenseValid() throws Exception {
+    public void testAddExpense() throws Exception {
         // Arrange
         Expense expense = new Expense();
+        expense.setDescription("Lunch");
         expense.setCategory("Food");
-        expense.setAmount(100.0);
-        expense.setDescription("Groceries");
-        expense.setDate(LocalDate.of(2023, 1, 1));
+        expense.setAmount(15.0);
+        expense.setDate(LocalDate.now());
+
+        doNothing().when(mockExpenseRepository).saveExpense(expense);
 
         // Act
         expenseController.addExpense(expense);
@@ -46,56 +49,51 @@ public class ExpenseControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void testAddExpenseInvalid() {
         // Arrange
-        Expense expense = new Expense();
-        expense.setCategory("Food");
-        expense.setAmount(-100.0);
-        expense.setDescription("Groceries");
-        expense.setDate(LocalDate.of(2023, 1, 1));
+        Expense expense = new Expense(); // Missing required fields
 
         // Act
         expenseController.addExpense(expense);
-
-        // Assert: Exception expected
     }
 
     @Test
     public void testGetAllExpenses() throws Exception {
         // Arrange
         Expense expense1 = new Expense();
-        expense1.setId(1);
+        expense1.setDescription("Lunch");
         expense1.setCategory("Food");
-        expense1.setAmount(100.0);
-        expense1.setDescription("Groceries");
-        expense1.setDate(LocalDate.of(2023, 1, 1));
+        expense1.setAmount(15.0);
+        expense1.setDate(LocalDate.now());
 
         Expense expense2 = new Expense();
-        expense2.setId(2);
-        expense2.setCategory("Bills");
-        expense2.setAmount(200.0);
-        expense2.setDescription("Utilities");
-        expense2.setDate(LocalDate.of(2023, 1, 2));
+        expense2.setDescription("Taxi");
+        expense2.setCategory("Transport");
+        expense2.setAmount(20.0);
+        expense2.setDate(LocalDate.now());
 
-        when(mockExpenseRepository.getAllExpenses()).thenReturn(Arrays.asList(expense1, expense2));
+        List<Expense> mockExpenses = Arrays.asList(expense1, expense2);
+        when(mockExpenseRepository.getAllExpenses()).thenReturn(mockExpenses);
 
         // Act
-        List<Expense> expenses = expenseController.getAllExpenses();
+        List<Expense> result = expenseController.getAllExpenses();
 
         // Assert
+        assertEquals(2, result.size());
+        assertEquals("Lunch", result.get(0).getDescription());
+        assertEquals("Taxi", result.get(1).getDescription());
         verify(mockExpenseRepository, times(1)).getAllExpenses();
-        assertEquals(2, expenses.size());
-        assertEquals("Groceries", expenses.get(0).getDescription());
-        assertEquals("Utilities", expenses.get(1).getDescription());
     }
 
     @Test
-    public void testUpdateExpenseValid() throws Exception {
+    public void testUpdateExpense() throws Exception {
         // Arrange
         Expense expense = new Expense();
         expense.setId(1);
+        expense.setDescription("Lunch Updated");
         expense.setCategory("Food");
-        expense.setAmount(200.0);
-        expense.setDescription("Updated Description");
-        expense.setDate(LocalDate.of(2023, 1, 5));
+        expense.setAmount(20.0);
+        expense.setDate(LocalDate.now());
+
+        doNothing().when(mockExpenseRepository).updateExpense(expense);
 
         // Act
         expenseController.updateExpense(expense);
@@ -108,6 +106,8 @@ public class ExpenseControllerTest {
     public void testDeleteExpense() throws Exception {
         // Arrange
         int expenseId = 1;
+
+        doNothing().when(mockExpenseRepository).deleteExpense(expenseId);
 
         // Act
         expenseController.deleteExpense(expenseId);

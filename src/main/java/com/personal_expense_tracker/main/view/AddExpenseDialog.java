@@ -32,7 +32,15 @@ public class AddExpenseDialog extends JDialog {
         setTitle(existingExpense == null ? "Add Expense" : "Update Expense");
         setName(existingExpense == null ? "Add Expense" : "Update Expense");
         setSize(400, 300);
-        setLocationRelativeTo(parentView);
+
+//        // Условие для тестов: проверяем parentView
+//        if (parentView != null && parentView instanceof JFrame) {
+//            setLocationRelativeTo(parentView);
+//        } else {
+//            setLocationRelativeTo(null); // Устанавливаем центр экрана для тестов
+//        }
+
+
         setLayout(new GridLayout(5, 2, 10, 10));
 
         add(new JLabel("Description:"));
@@ -56,10 +64,12 @@ public class AddExpenseDialog extends JDialog {
         add(dateField);
 
         saveButton = new JButton("Save");
+        saveButton.setName("saveButton");
         saveButton.setBackground(new Color(76, 175, 80));
         add(saveButton);
 
         cancelButton = new JButton("Cancel");
+        cancelButton.setName("cancelButton");
         cancelButton.setBackground(Color.GRAY);
         add(cancelButton);
 
@@ -114,11 +124,12 @@ public class AddExpenseDialog extends JDialog {
                 JOptionPane.showMessageDialog(this, "Failed to save expense: " + ex.getMessage());
             }
         });
+
         cancelButton.addActionListener(e -> {
             dispose();
         });
-
     }
+
 
     public JTextField getDescriptionField() {
         return descriptionField;
@@ -139,4 +150,9 @@ public class AddExpenseDialog extends JDialog {
     public JButton getSaveButton() {
         return saveButton;
     }
+    
+    public JButton getCancelButton() {
+        return cancelButton;
+    }
+
 }

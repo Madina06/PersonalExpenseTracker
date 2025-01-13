@@ -69,6 +69,10 @@ public class ExpenseView extends JFrame {
 
         // Buttons
         JPanel buttonPanel = new JPanel();
+        
+        expenseTable = new JTable(tableModel);
+        expenseTable.setName("expenseTable");
+        
         addExpenseButton = new JButton("Add Expense");
         addExpenseButton.setName("addExpenseButton");
         addExpenseButton.setBackground(new Color(76, 175, 80));

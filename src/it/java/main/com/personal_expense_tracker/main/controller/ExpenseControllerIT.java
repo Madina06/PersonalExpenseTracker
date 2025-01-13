@@ -1,14 +1,14 @@
 package main.com.personal_expense_tracker.main.controller;
 
-import org.junit.jupiter.api.*;
+
+import org.junit.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.*;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExpenseControllerIT {
 
     private static final PostgreSQLContainer<?> postgresContainer =
@@ -19,53 +19,44 @@ public class ExpenseControllerIT {
 
     private Connection connection;
 
-
-    @BeforeAll
-    static void startContainer() {
+    @BeforeClass
+    public static void startContainer() {
         // Запускаем контейнер перед тестами
         postgresContainer.start();
     }
 
-    @AfterAll
-    static void stopContainer() {
+    @AfterClass
+    public static void stopContainer() {
         // Останавливаем контейнер после тестов
         postgresContainer.stop();
     }
 
-    @BeforeAll
+    @Before
     public void setUpDatabase() throws SQLException {
-        // Connect to the Dockerized PostgreSQL database
+        // Подключаемся к базе данных в Docker
         connection = DriverManager.getConnection(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword());
-        // Create a test table
+        // Создаём таблицу для тестов
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("CREATE TABLE Expenses (\n" +
-                    "    id SERIAL PRIMARY KEY,\n" +
-                    "    description TEXT,\n" +
-                    "    category VARCHAR(100) NOT NULL,\n" +
-                    "    amount DECIMAL(10, 2) NOT NULL,\n" +
-                    "    date DATE NOT NULL)");
+            stmt.execute("CREATE TABLE IF NOT EXISTS Expenses (" +
+                    "id SERIAL PRIMARY KEY, " +
+                    "description TEXT, " +
+                    "category VARCHAR(100) NOT NULL, " +
+                    "amount DECIMAL(10, 2) NOT NULL, " +
+                    "date DATE NOT NULL)");
         }
     }
 
-    @AfterAll
+    @After
     public void tearDownDatabase() throws SQLException {
-        // Drop the test table
+        // Очищаем таблицу после каждого теста
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DROP TABLE IF EXISTS Expenses");
+            stmt.execute("TRUNCATE TABLE Expenses");
         }
         if (connection != null) {
             connection.close();
-        }
-    }
-
-    @BeforeEach
-    public void clearTable() throws SQLException {
-        // Clear the table before each test
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM Expenses");
         }
     }
 
@@ -79,32 +70,33 @@ public class ExpenseControllerIT {
             pstmt.setDate(4, Date.valueOf(LocalDate.now()));
             int affectedRows = pstmt.executeUpdate();
 
-            assertEquals(1, affectedRows, "One row should be inserted");
+            assertEquals(1, affectedRows);
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
-                assertTrue(rs.next(), "Generated key should exist");
+                assertTrue(rs.next());
                 int expenseId = rs.getInt(1);
-                assertTrue(expenseId > 0, "Expense ID should be a positive integer");
+                assertTrue(expenseId > 0);
             }
         }
     }
 
     @Test
     public void testReadExpense() throws SQLException {
-        // Insert a test expense
+        // Arrange: добавляем тестовые данные
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("INSERT INTO Expenses (description, category, amount, date) " +
                     "VALUES ('Groceries', 'Shopping', 50.75, '2025-01-01')");
         }
 
+        // Act: выполняем выборку
         String selectQuery = "SELECT * FROM Expenses WHERE category = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(selectQuery)) {
             pstmt.setString(1, "Shopping");
             try (ResultSet rs = pstmt.executeQuery()) {
-                assertTrue(rs.next(), "Result set should contain a record");
+                assertTrue(rs.next());
                 assertEquals("Groceries", rs.getString("description"));
                 assertEquals("Shopping", rs.getString("category"));
-                assertEquals(50.75, rs.getBigDecimal("amount").doubleValue());
+                assertEquals(50.75, rs.getBigDecimal("amount").doubleValue(), 0.001);
                 assertEquals(Date.valueOf("2025-01-01"), rs.getDate("date"));
             }
         }
@@ -112,12 +104,13 @@ public class ExpenseControllerIT {
 
     @Test
     public void testUpdateExpense() throws SQLException {
-        // Insert a test expense
+        // Arrange: добавляем тестовые данные
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("INSERT INTO Expenses (description, category, amount, date) " +
                     "VALUES ('Old Description', 'Miscellaneous', 100.00, '2025-01-02')");
         }
 
+        // Act: обновляем данные
         String updateQuery = "UPDATE Expenses SET description = ?, amount = ? WHERE category = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(updateQuery)) {
             pstmt.setString(1, "Updated Description");
@@ -125,16 +118,16 @@ public class ExpenseControllerIT {
             pstmt.setString(3, "Miscellaneous");
             int affectedRows = pstmt.executeUpdate();
 
-            assertEquals(1, affectedRows, "One row should be updated");
+            assertEquals(1, affectedRows);
 
-            // Verify the update
+            // Assert: проверяем обновление
             String selectQuery = "SELECT * FROM Expenses WHERE category = ?";
             try (PreparedStatement selectPstmt = connection.prepareStatement(selectQuery)) {
                 selectPstmt.setString(1, "Miscellaneous");
                 try (ResultSet rs = selectPstmt.executeQuery()) {
-                    assertTrue(rs.next(), "Result set should contain a record");
+                    assertTrue(rs.next());
                     assertEquals("Updated Description", rs.getString("description"));
-                    assertEquals(150.00, rs.getBigDecimal("amount").doubleValue());
+                    assertEquals(150.00, rs.getBigDecimal("amount").doubleValue(), 0.001);
                 }
             }
         }
@@ -142,29 +135,28 @@ public class ExpenseControllerIT {
 
     @Test
     public void testDeleteExpense() throws SQLException {
-        // Insert a test expense
+        // Arrange: добавляем тестовые данные
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("INSERT INTO Expenses (description, category, amount, date) " +
                     "VALUES ('Unnecessary Item', 'Luxury', 999.99, '2025-01-03')");
         }
 
+        // Act: удаляем данные
         String deleteQuery = "DELETE FROM Expenses WHERE category = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(deleteQuery)) {
             pstmt.setString(1, "Luxury");
             int affectedRows = pstmt.executeUpdate();
 
-            assertEquals(1, affectedRows, "One row should be deleted");
+            assertEquals(1, affectedRows);
 
-            // Verify deletion
+            // Assert: проверяем удаление
             String selectQuery = "SELECT * FROM Expenses WHERE category = ?";
             try (PreparedStatement selectPstmt = connection.prepareStatement(selectQuery)) {
                 selectPstmt.setString(1, "Luxury");
                 try (ResultSet rs = selectPstmt.executeQuery()) {
-                    assertFalse(rs.next(), "Result set should be empty");
+                    assertFalse(rs.next());
                 }
             }
         }
     }
-
-
 }

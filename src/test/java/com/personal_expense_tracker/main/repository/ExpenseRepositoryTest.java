@@ -6,14 +6,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class ExpenseRepositoryTest {
@@ -22,15 +19,32 @@ public class ExpenseRepositoryTest {
 
     @Mock
     private Connection mockConnection;
+
     @Mock
     private PreparedStatement mockPreparedStatement;
+
     @Mock
     private ResultSet mockResultSet;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
         expenseRepository = new ExpenseRepository(mockConnection);
+
+        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
+        when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
+    }
+
+    @Test
+    public void testCreateTableIfNotExists() throws Exception {
+        // Arrange
+        when(mockConnection.createStatement()).thenReturn(mock(Statement.class));
+
+        // Act
+        expenseRepository.createTableIfNotExists();
+
+        // Assert
+        verify(mockConnection, times(1)).createStatement();
     }
 
     @Test
@@ -39,46 +53,40 @@ public class ExpenseRepositoryTest {
         Expense expense = new Expense();
         expense.setDescription("Groceries");
         expense.setCategory("Food");
-        expense.setAmount(100.0);
-        expense.setDate(LocalDate.of(2023, 1, 1));
-
-        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
+        expense.setAmount(150.0);
+        expense.setDate(LocalDate.now());
 
         // Act
         expenseRepository.saveExpense(expense);
 
         // Assert
-        verify(mockPreparedStatement, times(1)).setString(1, expense.getDescription());
-        verify(mockPreparedStatement, times(1)).setString(2, expense.getCategory());
-        verify(mockPreparedStatement, times(1)).setDouble(3, expense.getAmount());
-        verify(mockPreparedStatement, times(1)).setDate(4, Date.valueOf(expense.getDate()));
+        verify(mockPreparedStatement, times(1)).setString(1, "Groceries");
+        verify(mockPreparedStatement, times(1)).setString(2, "Food");
+        verify(mockPreparedStatement, times(1)).setDouble(3, 150.0);
+        verify(mockPreparedStatement, times(1)).setDate(4, Date.valueOf(LocalDate.now()));
         verify(mockPreparedStatement, times(1)).executeUpdate();
     }
 
     @Test
     public void testGetAllExpenses() throws Exception {
         // Arrange
-        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
-        when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
+        when(mockResultSet.next()).thenReturn(true, true, false);
 
-        when(mockResultSet.next()).thenReturn(true, false); // Simulate one row in the result set
-        when(mockResultSet.getInt("id")).thenReturn(1);
-        when(mockResultSet.getString("description")).thenReturn("Groceries");
-        when(mockResultSet.getString("category")).thenReturn("Food");
-        when(mockResultSet.getDouble("amount")).thenReturn(100.0);
-        when(mockResultSet.getDate("date")).thenReturn(Date.valueOf(LocalDate.of(2023, 1, 1)));
+        when(mockResultSet.getInt("id")).thenReturn(1, 2);
+        when(mockResultSet.getString("description")).thenReturn("Groceries", "Transport");
+        when(mockResultSet.getString("category")).thenReturn("Food", "Travel");
+        when(mockResultSet.getDouble("amount")).thenReturn(150.0, 50.0);
+        when(mockResultSet.getDate("date")).thenReturn(Date.valueOf(LocalDate.now()));
 
         // Act
         List<Expense> expenses = expenseRepository.getAllExpenses();
 
         // Assert
-        assertEquals(1, expenses.size());
-        Expense expense = expenses.get(0);
-        assertEquals(1, expense.getId());
-        assertEquals("Groceries", expense.getDescription());
-        assertEquals("Food", expense.getCategory());
-        assertEquals(100.0, expense.getAmount(), 0.01);
-        assertEquals(LocalDate.of(2023, 1, 1), expense.getDate());
+        assertEquals(2, expenses.size());
+        assertEquals("Groceries", expenses.get(0).getDescription());
+        assertEquals("Food", expenses.get(0).getCategory());
+        assertEquals(150.0, expenses.get(0).getAmount(), 0.01);
+        assertEquals("Transport", expenses.get(1).getDescription());
     }
 
     @Test
@@ -86,30 +94,25 @@ public class ExpenseRepositoryTest {
         // Arrange
         Expense expense = new Expense();
         expense.setId(1);
-        expense.setDescription("Updated Groceries");
+        expense.setDescription("Groceries Updated");
         expense.setCategory("Food");
-        expense.setAmount(150.0);
-        expense.setDate(LocalDate.of(2023, 1, 2));
-
-        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
+        expense.setAmount(200.0);
+        expense.setDate(LocalDate.now());
 
         // Act
         expenseRepository.updateExpense(expense);
 
         // Assert
-        verify(mockPreparedStatement, times(1)).setString(1, expense.getDescription());
-        verify(mockPreparedStatement, times(1)).setString(2, expense.getCategory());
-        verify(mockPreparedStatement, times(1)).setDouble(3, expense.getAmount());
-        verify(mockPreparedStatement, times(1)).setDate(4, Date.valueOf(expense.getDate()));
-        verify(mockPreparedStatement, times(1)).setInt(5, expense.getId());
+        verify(mockPreparedStatement, times(1)).setString(1, "Groceries Updated");
+        verify(mockPreparedStatement, times(1)).setString(2, "Food");
+        verify(mockPreparedStatement, times(1)).setDouble(3, 200.0);
+        verify(mockPreparedStatement, times(1)).setDate(4, Date.valueOf(LocalDate.now()));
+        verify(mockPreparedStatement, times(1)).setInt(5, 1);
         verify(mockPreparedStatement, times(1)).executeUpdate();
     }
 
     @Test
     public void testDeleteExpense() throws Exception {
-        // Arrange
-        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
-
         // Act
         expenseRepository.deleteExpense(1);
 

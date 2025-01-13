@@ -5,18 +5,19 @@ import com.personal_expense_tracker.main.model.Expense;
 import com.personal_expense_tracker.main.repository.ExpenseRepository;
 import com.personal_expense_tracker.main.view.AddExpenseDialog;
 import com.personal_expense_tracker.main.view.ExpenseView;
-import org.junit.jupiter.api.*;
+
+import org.junit.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AddExpenseDialogIT {
 
     private static final PostgreSQLContainer<?> postgresContainer =
@@ -29,17 +30,26 @@ public class AddExpenseDialogIT {
     private ExpenseController expenseController;
     private ExpenseView expenseView;
 
-    @BeforeAll
-    static void startContainer() {
+    @BeforeClass
+    public static void startContainer() {
         postgresContainer.start();
     }
 
-    @AfterAll
-    static void stopContainer() {
+    @AfterClass
+    public static void stopContainer() {
         postgresContainer.stop();
     }
+    
+    @Before
+    public void setUp() throws Exception {
+        SwingUtilities.invokeAndWait(() -> {
+            expenseView = new ExpenseView(expenseController);
+            expenseView.setVisible(true); // Окно должно быть отображено
+        });
+    }
 
-    @BeforeAll
+
+    @Before
     public void setUpDatabase() throws SQLException {
         connection = DriverManager.getConnection(
                 postgresContainer.getJdbcUrl(),
@@ -47,11 +57,11 @@ public class AddExpenseDialogIT {
                 postgresContainer.getPassword());
 
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("CREATE TABLE Expenses (" +
-                    "id SERIAL PRIMARY KEY," +
-                    "description TEXT," +
-                    "category VARCHAR(100) NOT NULL," +
-                    "amount DECIMAL(10, 2) NOT NULL," +
+            stmt.execute("CREATE TABLE IF NOT EXISTS Expenses (" +
+                    "id SERIAL PRIMARY KEY, " +
+                    "description TEXT, " +
+                    "category VARCHAR(100) NOT NULL, " +
+                    "amount DECIMAL(10, 2) NOT NULL, " +
                     "date DATE NOT NULL)");
         }
 
@@ -60,25 +70,18 @@ public class AddExpenseDialogIT {
         expenseView = new ExpenseView(expenseController);
     }
 
-    @AfterAll
+    @After
     public void tearDownDatabase() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DROP TABLE IF EXISTS Expenses");
+            stmt.execute("TRUNCATE TABLE Expenses");
         }
         if (connection != null) {
             connection.close();
         }
     }
 
-    @BeforeEach
-    public void clearDatabase() throws SQLException {
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM Expenses");
-        }
-    }
-
     @Test
-    void testAddExpenseDialogCreatesExpense() throws Exception {
+    public void testAddExpenseDialogCreatesExpense() throws Exception {
         // Arrange
         AddExpenseDialog dialog = new AddExpenseDialog(expenseController, expenseView);
 
@@ -101,7 +104,7 @@ public class AddExpenseDialogIT {
     }
 
     @Test
-    void testAddExpenseDialogValidationError() throws Exception {
+    public void testAddExpenseDialogValidationError() throws Exception {
         // Arrange
         AddExpenseDialog dialog = new AddExpenseDialog(expenseController, expenseView);
 
@@ -120,7 +123,7 @@ public class AddExpenseDialogIT {
     }
 
     @Test
-    void testAddExpenseDialogUpdatesExistingExpense() throws Exception {
+    public void testAddExpenseDialogUpdatesExistingExpense() throws Exception {
         // Arrange: Add an initial expense
         Expense expense = new Expense();
         expense.setDescription("Old Expense");
