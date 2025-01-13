@@ -1,12 +1,14 @@
-#Feature: Expense Management
-#
-#  Background:
-#    Given The database contains a few expenses
-#
-#  Scenario: Adding an expense
-#    When The Expense View is shown
-#    Given The user provides expense details with description "Lunch", amount "50.0", category "Food", and date "2023-12-01"
-#    When The user clicks the "Add Expense" button
-#    Then The expense with description "Lunch" should be added to the database
-#    And The displayed expenses should include the added expense
-#
+Feature: Expense Management
+
+  Scenario: User opens the "Add Expense" dialog
+    Given the main window is displayed
+    When the user clicks the Add Expense button
+    Then the Add Expense dialog should appear
+
+    Given the Add Expense dialog is open
+    When the user enters a description "Lunch", category "Food", amount "50", and date "2025-01-12"
+    And the user clicks the Save button
+    Then the expense should be saved with the correct description, category, amount, and date
+
+ 
+

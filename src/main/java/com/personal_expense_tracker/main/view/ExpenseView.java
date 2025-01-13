@@ -30,10 +30,6 @@ public class ExpenseView extends JFrame {
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
-        //contentPane = new JPanel();
-        //contentPane.setBorder(new EmptyBorder(15, 15, 15, 15));
-        //setContentPane(contentPane);
-        //contentPane.setLayout(new BorderLayout(15, 15));
 
         JPanel allExpensesPanel = new JPanel(new BorderLayout(15, 15));
         allExpensesPanel.setBorder(new TitledBorder(new LineBorder(Color.GRAY,
@@ -42,32 +38,12 @@ public class ExpenseView extends JFrame {
                 new Font("Arial", Font.BOLD, 14), Color.DARK_GRAY));
         setContentPane(allExpensesPanel);
 
-        // Expense Table
         String[] columnNames = {"ID", "Description", "Category", "Amount", "Date"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
         expenseTable = new JTable(tableModel);
         expenseTable.setName("expenseTable");
         JScrollPane scrollPane = new JScrollPane(expenseTable);
 
-
-        /*
-        * JPanel panel = new JPanel(new GridLayout(1, 2, 15, 0));
-
-
-
-		listAllOrdersModel = new DefaultListModel<>();
-		listAllOrders = new JList<>(listAllOrdersModel);
-		listAllOrders.setName("listAllOrders");
-		listAllOrders.setFont(new Font("Arial", Font.PLAIN, 12));
-		listAllOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		listAllOrders.setCellRenderer(new OrderListCellRenderer());
-		listAllOrders.addListSelectionListener(e -> handleOrderSelection(listAllOrders.getSelectedValue()));
-		JScrollPane scrollAll = new JScrollPane(listAllOrders);
-		allOrdersPanel.add(scrollAll, BorderLayout.CENTER);
-        *
-        * */
-
-        // Buttons
         JPanel buttonPanel = new JPanel();
         
         expenseTable = new JTable(tableModel);
@@ -93,10 +69,8 @@ public class ExpenseView extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // Populate Table
         refreshExpenseTable();
 
-        // Event Listeners
         addExpenseButton.addActionListener(e -> new AddExpenseDialog(expenseController, this).setVisible(true));
 
         updateExpenseButton.addActionListener(e -> {

@@ -33,25 +33,21 @@ public class ExpenseViewIT {
 
     @BeforeClass
     public static void startContainer() {
-        // Запускаем контейнер перед тестами
         postgresContainer.start();
     }
 
     @AfterClass
     public static void stopContainer() {
-        // Останавливаем контейнер после тестов
         postgresContainer.stop();
     }
 
     @Before
     public void setUpDatabase() throws SQLException {
-        // Подключаемся к базе данных в Docker
         connection = DriverManager.getConnection(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword());
 
-        // Создаём таблицу для тестов
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS Expenses (" +
                     "id SERIAL PRIMARY KEY, " +
@@ -61,7 +57,6 @@ public class ExpenseViewIT {
                     "date DATE NOT NULL)");
         }
 
-        // Инициализируем репозиторий, контроллер и представление
         expenseRepository = new ExpenseRepository(connection);
         expenseController = new ExpenseController(expenseRepository);
         expenseView = new ExpenseView(expenseController);
@@ -69,7 +64,6 @@ public class ExpenseViewIT {
 
     @After
     public void tearDownDatabase() throws SQLException {
-        // Очищаем таблицу после каждого теста
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("TRUNCATE TABLE Expenses");
         }
@@ -77,18 +71,15 @@ public class ExpenseViewIT {
 
     @Test
     public void testAddExpenseUpdatesTable() throws Exception {
-        // Arrange: создаём новый расход
         Expense expense = new Expense();
         expense.setDescription("Dinner");
         expense.setCategory("Food");
         expense.setAmount(25.0);
         expense.setDate(LocalDate.of(2023, 5, 1));
 
-        // Act: добавляем расход и обновляем таблицу
         expenseController.addExpense(expense);
         expenseView.refreshExpenseTable();
 
-        // Assert: проверяем, что таблица обновилась
         DefaultTableModel tableModel = (DefaultTableModel) expenseView.expenseTable.getModel();
         assertEquals(1, tableModel.getRowCount());
         assertEquals("Dinner", tableModel.getValueAt(0, 1));
@@ -99,7 +90,6 @@ public class ExpenseViewIT {
 
     @Test
     public void testUpdateExpenseUpdatesTable() throws Exception {
-        // Arrange: добавляем расход
         Expense expense = new Expense();
         expense.setDescription("Old Expense");
         expense.setCategory("Old Category");
@@ -107,7 +97,6 @@ public class ExpenseViewIT {
         expense.setDate(LocalDate.of(2023, 1, 1));
         expenseController.addExpense(expense);
 
-        // Обновляем данные расхода
         Expense fetchedExpense = expenseController.getAllExpenses().get(0);
         fetchedExpense.setDescription("Updated Expense");
         fetchedExpense.setCategory("Updated Category");
@@ -115,10 +104,8 @@ public class ExpenseViewIT {
         fetchedExpense.setDate(LocalDate.of(2023, 6, 1));
         expenseController.updateExpense(fetchedExpense);
 
-        // Act
         expenseView.refreshExpenseTable();
 
-        // Assert
         DefaultTableModel tableModel = (DefaultTableModel) expenseView.expenseTable.getModel();
         assertEquals(1, tableModel.getRowCount());
         assertEquals("Updated Expense", tableModel.getValueAt(0, 1));
@@ -129,7 +116,6 @@ public class ExpenseViewIT {
 
     @Test
     public void testDeleteExpenseUpdatesTable() throws Exception {
-        // Arrange: добавляем расход
         Expense expense = new Expense();
         expense.setDescription("Expense to Delete");
         expense.setCategory("Category to Delete");
@@ -137,19 +123,16 @@ public class ExpenseViewIT {
         expense.setDate(LocalDate.of(2023, 1, 1));
         expenseController.addExpense(expense);
 
-        // Удаляем расход
         Expense fetchedExpense = expenseController.getAllExpenses().get(0);
         expenseController.deleteExpense(fetchedExpense.getId());
         expenseView.refreshExpenseTable();
 
-        // Assert
         DefaultTableModel tableModel = (DefaultTableModel) expenseView.expenseTable.getModel();
         assertEquals(0, tableModel.getRowCount());
     }
 
     @Test
     public void testGetAllExpensesPopulatesTable() throws Exception {
-        // Arrange: добавляем несколько расходов
         Expense expense1 = new Expense();
         expense1.setDescription("Expense 1");
         expense1.setCategory("Groceries");
@@ -164,20 +147,16 @@ public class ExpenseViewIT {
         expense2.setDate(LocalDate.of(2023, 2, 1));
         expenseController.addExpense(expense2);
 
-        // Act
         expenseView.refreshExpenseTable();
 
-        // Assert
         DefaultTableModel tableModel = (DefaultTableModel) expenseView.expenseTable.getModel();
         assertEquals(2, tableModel.getRowCount());
 
-        // Проверяем первую строку
         assertEquals("Expense 1", tableModel.getValueAt(0, 1));
         assertEquals("Groceries", tableModel.getValueAt(0, 2));
         assertEquals(100.0, tableModel.getValueAt(0, 3));
         assertEquals("2023-01-01", tableModel.getValueAt(0, 4).toString());
 
-        // Проверяем вторую строку
         assertEquals("Expense 2", tableModel.getValueAt(1, 1));
         assertEquals("Utilities", tableModel.getValueAt(1, 2));
         assertEquals(200.0, tableModel.getValueAt(1, 3));

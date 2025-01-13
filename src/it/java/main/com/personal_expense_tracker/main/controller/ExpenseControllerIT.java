@@ -20,24 +20,21 @@ public class ExpenseControllerIT {
 
     @BeforeClass
     public static void startContainer() {
-        // Запускаем контейнер перед тестами
         postgresContainer.start();
     }
 
     @AfterClass
     public static void stopContainer() {
-        // Останавливаем контейнер после тестов
         postgresContainer.stop();
     }
 
     @Before
     public void setUpDatabase() throws SQLException {
-        // Подключаемся к базе данных в Docker
         connection = DriverManager.getConnection(
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword());
-        // Создаём таблицу для тестов
+
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS Expenses (" +
                     "id SERIAL PRIMARY KEY, " +
@@ -50,7 +47,6 @@ public class ExpenseControllerIT {
 
     @After
     public void tearDownDatabase() throws SQLException {
-        // Очищаем таблицу после каждого теста
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("TRUNCATE TABLE Expenses");
         }
@@ -141,7 +137,6 @@ public class ExpenseControllerIT {
 
     @Test
     public void testDeleteExpense_ValidId() throws SQLException {
-        // Arrange: добавляем тестовые данные
         int expenseId;
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("INSERT INTO Expenses (description, category, amount, date) " +
@@ -151,13 +146,11 @@ public class ExpenseControllerIT {
             expenseId = rs.getInt("id");
         }
 
-        // Act: удаляем данные
         String deleteQuery = "DELETE FROM Expenses WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(deleteQuery)) {
             pstmt.setInt(1, expenseId);
             int affectedRows = pstmt.executeUpdate();
 
-            // Assert
             assertEquals(1, affectedRows);
             String selectQuery = "SELECT * FROM Expenses WHERE id = ?";
             try (PreparedStatement selectPstmt = connection.prepareStatement(selectQuery)) {
@@ -171,32 +164,26 @@ public class ExpenseControllerIT {
 
     @Test
     public void testDeleteExpense_InvalidId() throws SQLException {
-        // Arrange: используем ID, который не существует
         int nonExistentId = 99999;
 
-        // Act
         String deleteQuery = "DELETE FROM Expenses WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(deleteQuery)) {
             pstmt.setInt(1, nonExistentId);
             int affectedRows = pstmt.executeUpdate();
 
-            // Assert
             assertEquals(0, affectedRows);
         }
     }
 
     @Test
     public void testDeleteExpense_InvalidId_Negative() throws SQLException {
-        // Arrange: используем отрицательный ID
         int invalidId = -1;
 
-        // Act
         String deleteQuery = "DELETE FROM Expenses WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(deleteQuery)) {
             pstmt.setInt(1, invalidId);
             int affectedRows = pstmt.executeUpdate();
 
-            // Assert
             assertEquals(0, affectedRows);
         }
     }
@@ -207,7 +194,7 @@ public class ExpenseControllerIT {
         String insertQuery = "INSERT INTO Expenses (description, category, amount, date) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(insertQuery)) {
             pstmt.setString(1, "Test Description");
-            pstmt.setString(2, ""); // Пустая категория
+            pstmt.setString(2, ""); 
             pstmt.setBigDecimal(3, new java.math.BigDecimal("15.00"));
             pstmt.setDate(4, Date.valueOf(LocalDate.now()));
             pstmt.executeUpdate();

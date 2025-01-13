@@ -26,14 +26,83 @@ public class AddExpenseDialogTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        // Используем мок вместо реального объекта
         addExpenseDialog = new AddExpenseDialog(mockExpenseController, mockParentView);
     }
 
     @Test
-    public void testSaveNewExpenseValid() {
-        // Arrange
+    public void testSaveNewExpense_AllFieldsEmpty() {
+        JTextField descriptionField = addExpenseDialog.getDescriptionField();
+        JTextField amountField = addExpenseDialog.getAmountField();
+        JTextField categoryField = addExpenseDialog.getCategoryField();
+        JTextField dateField = addExpenseDialog.getDateField();
+        JButton saveButton = addExpenseDialog.getSaveButton();
+
+        descriptionField.setText("");
+        amountField.setText("");
+        categoryField.setText("");
+        dateField.setText("");
+
+        saveButton.doClick();
+
+        verify(mockExpenseController, never()).addExpense(any(Expense.class));
+    }
+
+    @Test
+    public void testSaveNewExpense_OnlyDescriptionFilled() {
+        JTextField descriptionField = addExpenseDialog.getDescriptionField();
+        JTextField amountField = addExpenseDialog.getAmountField();
+        JTextField categoryField = addExpenseDialog.getCategoryField();
+        JTextField dateField = addExpenseDialog.getDateField();
+        JButton saveButton = addExpenseDialog.getSaveButton();
+
+        descriptionField.setText("Groceries");
+        amountField.setText("");
+        categoryField.setText("");
+        dateField.setText("");
+
+        saveButton.doClick();
+
+        verify(mockExpenseController, never()).addExpense(any(Expense.class));
+    }
+
+    @Test
+    public void testSaveNewExpense_InvalidAmountFormat() {
+        JTextField descriptionField = addExpenseDialog.getDescriptionField();
+        JTextField amountField = addExpenseDialog.getAmountField();
+        JTextField categoryField = addExpenseDialog.getCategoryField();
+        JTextField dateField = addExpenseDialog.getDateField();
+        JButton saveButton = addExpenseDialog.getSaveButton();
+
+        descriptionField.setText("Groceries");
+        amountField.setText("abc");
+        categoryField.setText("Food");
+        dateField.setText(LocalDate.now().toString());
+
+        saveButton.doClick();
+
+        verify(mockExpenseController, never()).addExpense(any(Expense.class));
+    }
+
+    @Test
+    public void testSaveNewExpense_InvalidDateFormat() {
+        JTextField descriptionField = addExpenseDialog.getDescriptionField();
+        JTextField amountField = addExpenseDialog.getAmountField();
+        JTextField categoryField = addExpenseDialog.getCategoryField();
+        JTextField dateField = addExpenseDialog.getDateField();
+        JButton saveButton = addExpenseDialog.getSaveButton();
+
+        descriptionField.setText("Groceries");
+        amountField.setText("150.00");
+        categoryField.setText("Food");
+        dateField.setText("invalid-date");
+
+        saveButton.doClick();
+
+        verify(mockExpenseController, never()).addExpense(any(Expense.class));
+    }
+
+    @Test
+    public void testSaveNewExpense_ValidFields() {
         JTextField descriptionField = addExpenseDialog.getDescriptionField();
         JTextField amountField = addExpenseDialog.getAmountField();
         JTextField categoryField = addExpenseDialog.getCategoryField();
@@ -48,17 +117,14 @@ public class AddExpenseDialogTest {
         doNothing().when(mockExpenseController).addExpense(any(Expense.class));
         doNothing().when(mockParentView).refreshExpenseTable();
 
-        // Act
         saveButton.doClick();
 
-        // Assert
         verify(mockExpenseController, times(1)).addExpense(any(Expense.class));
         verify(mockParentView, times(1)).refreshExpenseTable();
     }
 
     @Test
-    public void testSaveNewExpenseInvalidAmount() {
-        // Arrange
+    public void testSaveNewExpense_ExceptionThrown() {
         JTextField descriptionField = addExpenseDialog.getDescriptionField();
         JTextField amountField = addExpenseDialog.getAmountField();
         JTextField categoryField = addExpenseDialog.getCategoryField();
@@ -66,47 +132,96 @@ public class AddExpenseDialogTest {
         JButton saveButton = addExpenseDialog.getSaveButton();
 
         descriptionField.setText("Groceries");
-        amountField.setText("invalid");
+        amountField.setText("150.00");
         categoryField.setText("Food");
         dateField.setText(LocalDate.now().toString());
 
-        // Act
+        doThrow(new RuntimeException("Test Exception")).when(mockExpenseController).addExpense(any(Expense.class));
+
         saveButton.doClick();
 
-        // Assert
-        verify(mockExpenseController, never()).addExpense(any(Expense.class));
+        verify(mockExpenseController, times(1)).addExpense(any(Expense.class));
     }
-
+    
     @Test
-    public void testSaveNewExpenseEmptyFields() {
-        // Arrange
+    public void testSaveNewExpense_EmptyDescriptionAndOthersValid() {
         JTextField descriptionField = addExpenseDialog.getDescriptionField();
         JTextField amountField = addExpenseDialog.getAmountField();
         JTextField categoryField = addExpenseDialog.getCategoryField();
         JTextField dateField = addExpenseDialog.getDateField();
         JButton saveButton = addExpenseDialog.getSaveButton();
 
-        descriptionField.setText("");
-        amountField.setText("");
-        categoryField.setText("");
-        dateField.setText("");
+        descriptionField.setText(""); 
+        amountField.setText("100.00"); 
+        categoryField.setText("Food"); 
+        dateField.setText(LocalDate.now().toString()); 
 
-        // Act
         saveButton.doClick();
 
-        // Assert
         verify(mockExpenseController, never()).addExpense(any(Expense.class));
     }
 
     @Test
-    public void testCancelButtonClosesDialog() {
-        // Arrange
+    public void testSaveNewExpense_EmptyAmountAndOthersValid() {
+        JTextField descriptionField = addExpenseDialog.getDescriptionField();
+        JTextField amountField = addExpenseDialog.getAmountField();
+        JTextField categoryField = addExpenseDialog.getCategoryField();
+        JTextField dateField = addExpenseDialog.getDateField();
+        JButton saveButton = addExpenseDialog.getSaveButton();
+
+        descriptionField.setText("Groceries"); 
+        amountField.setText(""); 
+        categoryField.setText("Food"); 
+        dateField.setText(LocalDate.now().toString()); 
+
+        saveButton.doClick();
+
+        verify(mockExpenseController, never()).addExpense(any(Expense.class));
+    }
+
+    @Test
+    public void testSaveNewExpense_EmptyCategoryAndOthersValid() {
+        JTextField descriptionField = addExpenseDialog.getDescriptionField();
+        JTextField amountField = addExpenseDialog.getAmountField();
+        JTextField categoryField = addExpenseDialog.getCategoryField();
+        JTextField dateField = addExpenseDialog.getDateField();
+        JButton saveButton = addExpenseDialog.getSaveButton();
+
+        descriptionField.setText("Groceries"); 
+        amountField.setText("100.00"); 
+        categoryField.setText(""); 
+        dateField.setText(LocalDate.now().toString()); 
+
+        saveButton.doClick();
+
+        verify(mockExpenseController, never()).addExpense(any(Expense.class));
+    }
+
+    @Test
+    public void testSaveNewExpense_EmptyDateAndOthersValid() {
+        JTextField descriptionField = addExpenseDialog.getDescriptionField();
+        JTextField amountField = addExpenseDialog.getAmountField();
+        JTextField categoryField = addExpenseDialog.getCategoryField();
+        JTextField dateField = addExpenseDialog.getDateField();
+        JButton saveButton = addExpenseDialog.getSaveButton();
+
+        descriptionField.setText("Groceries"); 
+        amountField.setText("100.00"); 
+        categoryField.setText("Food"); 
+        dateField.setText(""); 
+
+        saveButton.doClick();
+
+        verify(mockExpenseController, never()).addExpense(any(Expense.class));
+    }
+
+
+    @Test
+    public void testCancelButton_ClosesDialog() {
         JButton cancelButton = addExpenseDialog.getCancelButton();
 
-        // Act
         cancelButton.doClick();
 
-        // Assert
         assertFalse(addExpenseDialog.isVisible());
     }
 }

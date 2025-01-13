@@ -14,7 +14,6 @@ public class ExpenseController {
         this.expenseRepository = expenseRepository;
     }
 
-    // Add a new expense
     public void addExpense(Expense expense) throws IllegalArgumentException {
         validateExpense(expense);
         try {
@@ -24,7 +23,6 @@ public class ExpenseController {
         }
     }
 
-    // Retrieve all expenses
     public List<Expense> getAllExpenses() {
         try {
             return expenseRepository.getAllExpenses();
@@ -33,7 +31,6 @@ public class ExpenseController {
         }
     }
 
-    // Update an existing expense
     public void updateExpense(Expense expense) throws IllegalArgumentException {
         validateExpense(expense);
         try {
@@ -43,7 +40,6 @@ public class ExpenseController {
         }
     }
 
- // Delete an expense by ID
     public void deleteExpense(int expenseId) {
         if (expenseId <= 0) {
             throw new IllegalArgumentException("Expense ID must be greater than 0");
@@ -54,9 +50,7 @@ public class ExpenseController {
             throw new RuntimeException("Failed to delete expense: " + e.getMessage(), e);
         }
     }
-
-
-    // Validate expense data
+    
     private void validateExpense(Expense expense) throws IllegalArgumentException {
         if (expense.getDescription() == null || expense.getDescription().isEmpty()) {
             throw new IllegalArgumentException("Description cannot be null or empty.");

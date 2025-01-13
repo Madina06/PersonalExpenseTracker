@@ -44,7 +44,7 @@ public class AddExpenseDialogIT {
     public void setUp() throws Exception {
         SwingUtilities.invokeAndWait(() -> {
             expenseView = new ExpenseView(expenseController);
-            expenseView.setVisible(true); // Окно должно быть отображено
+            expenseView.setVisible(true); 
         });
     }
 
@@ -82,19 +82,15 @@ public class AddExpenseDialogIT {
 
     @Test
     public void testAddExpenseDialogCreatesExpense() throws Exception {
-        // Arrange
         AddExpenseDialog dialog = new AddExpenseDialog(expenseController, expenseView);
 
-        // Simulate user input
         dialog.getDescriptionField().setText("New Expense");
         dialog.getAmountField().setText("100.0");
         dialog.getCategoryField().setText("Food");
         dialog.getDateField().setText("2023-12-31");
 
-        // Act
         dialog.getSaveButton().doClick();
 
-        // Assert
         DefaultTableModel tableModel = (DefaultTableModel) expenseView.expenseTable.getModel();
         assertEquals(1, tableModel.getRowCount());
         assertEquals("New Expense", tableModel.getValueAt(0, 1));
@@ -105,26 +101,21 @@ public class AddExpenseDialogIT {
 
     @Test
     public void testAddExpenseDialogValidationError() throws Exception {
-        // Arrange
         AddExpenseDialog dialog = new AddExpenseDialog(expenseController, expenseView);
 
-        // Simulate user input with invalid amount
         dialog.getDescriptionField().setText("Invalid Expense");
-        dialog.getAmountField().setText("InvalidAmount"); // Invalid input
+        dialog.getAmountField().setText("InvalidAmount"); 
         dialog.getCategoryField().setText("Food");
         dialog.getDateField().setText("2023-12-31");
 
-        // Act
         dialog.getSaveButton().doClick();
 
-        // Assert: Verify that no expense was added
         DefaultTableModel tableModel = (DefaultTableModel) expenseView.expenseTable.getModel();
         assertEquals(0, tableModel.getRowCount());
     }
 
     @Test
     public void testAddExpenseDialogUpdatesExistingExpense() throws Exception {
-        // Arrange: Add an initial expense
         Expense expense = new Expense();
         expense.setDescription("Old Expense");
         expense.setCategory("Old Category");
@@ -132,22 +123,17 @@ public class AddExpenseDialogIT {
         expense.setDate(java.time.LocalDate.of(2023, 1, 1));
         expenseController.addExpense(expense);
 
-        // Fetch the inserted expense
         Expense fetchedExpense = expenseController.getAllExpenses().get(0);
 
-        // Open dialog for updating expense
         AddExpenseDialog dialog = new AddExpenseDialog(expenseController, expenseView, fetchedExpense);
 
-        // Simulate user input
         dialog.getDescriptionField().setText("Updated Expense");
         dialog.getAmountField().setText("150.0");
         dialog.getCategoryField().setText("Updated Category");
         dialog.getDateField().setText("2023-06-01");
 
-        // Act
         dialog.getSaveButton().doClick();
 
-        // Assert
         DefaultTableModel tableModel = (DefaultTableModel) expenseView.expenseTable.getModel();
         assertEquals(1, tableModel.getRowCount());
         assertEquals("Updated Expense", tableModel.getValueAt(0, 1));
