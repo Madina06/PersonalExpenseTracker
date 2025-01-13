@@ -60,7 +60,7 @@ public class ExpenseViewTest {
     @Test
     public void testAddExpenseButton() {
         // Act
-        JButton addButton = expenseView.addExpenseButton;
+        JButton addButton = expenseView.getAddExpenseButton();
         addButton.doClick();
 
         // Assert
@@ -78,7 +78,7 @@ public class ExpenseViewTest {
         expenseTable.setRowSelectionInterval(0, 0);
 
         // Act
-        JButton updateButton = expenseView.updateExpenseButton;
+        JButton updateButton = expenseView.getUpdateExpenseButton();
         updateButton.doClick();
 
         // Assert
@@ -96,7 +96,7 @@ public class ExpenseViewTest {
         expenseTable.setRowSelectionInterval(0, 0);
 
         // Act
-        JButton deleteButton = expenseView.deleteExpenseButton;
+        JButton deleteButton = expenseView.getDeleteExpenseButton();
         deleteButton.doClick();
 
         // Assert
@@ -111,7 +111,7 @@ public class ExpenseViewTest {
         model.addRow(new Object[]{1, "Groceries", "Food", 100.0, LocalDate.of(2023, 1, 1).toString()});
 
         // Act
-        JButton deleteButton = expenseView.deleteExpenseButton;
+        JButton deleteButton = expenseView.getDeleteExpenseButton();
         expenseTable.clearSelection();
         deleteButton.doClick();
 
@@ -127,7 +127,7 @@ public class ExpenseViewTest {
         model.addRow(new Object[]{1, "Groceries", "Food", 100.0, LocalDate.of(2023, 1, 1).toString()});
 
         // Act
-        JButton updateButton = expenseView.updateExpenseButton;
+        JButton updateButton = expenseView.getUpdateExpenseButton();
         expenseTable.clearSelection();
         updateButton.doClick();
 

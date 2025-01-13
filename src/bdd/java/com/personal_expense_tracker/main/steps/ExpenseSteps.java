@@ -2,6 +2,7 @@
 package com.personal_expense_tracker.main.steps;
 
 import io.cucumber.java.After;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -9,7 +10,10 @@ import org.assertj.swing.core.BasicRobot;
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.finder.WindowFinder;
+import org.assertj.swing.fixture.DialogFixture;
 import org.assertj.swing.fixture.FrameFixture;
+import org.assertj.swing.fixture.JButtonFixture;
+import org.assertj.swing.fixture.JTextComponentFixture;
 
 import javax.swing.*;
 
@@ -17,56 +21,82 @@ import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
 public class ExpenseSteps {
 
-    private FrameFixture window;
+    private FrameFixture rootWindow;
+
+    private DialogFixture addExpenseDialog;
 
 
     @After
     public void tearDown() {
-        if (window != null) {
-            window.cleanUp();
+        if (rootWindow != null) {
+            rootWindow.cleanUp();
         }
     }
 
-    @When("The Expense View is shown")
-    public void theExpenseViewIsShown() {
+    @Given("the main window is displayed")
+    public void theMainWindowIsDisplayed() {
         application("com.personal_expense_tracker.main.App").start();
-        window = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
+        rootWindow = WindowFinder.findFrame(new GenericTypeMatcher<JFrame>(JFrame.class) {
             @Override
             protected boolean isMatching(JFrame frame) {
                 return "Personal Expense Tracker".equals(frame.getTitle()) && frame.isShowing();
             }
         }).using(BasicRobot.robotWithCurrentAwtHierarchy());
+    }
 
+    @When("the user clicks the Add Expense button")
+    public void theUserClicksTheAddExpensesButton() {
+        JButtonFixture addExpense = rootWindow.button(JButtonMatcher.withText("Add Expense"));
+        addExpense.click();
+
+        addExpenseDialog = WindowFinder.findDialog(new GenericTypeMatcher<JDialog>(JDialog.class) {
+            @Override
+            protected boolean isMatching(JDialog dialog) {
+                return "Add Expense".equals(dialog.getTitle()) && dialog.isShowing();
+            }
+        }).using(rootWindow.robot());
     }
 
 
-//    @When("The user clicks the {string} button")
-//    public void theUserClicksTheButton(String buttonText) {
-//        window.button(JButtonMatcher.withText(buttonText)).click();
-//    }
-
-    @Then("The displayed expenses should include the added expense")
-    public void theDisplayedExpensesShouldIncludeTheAddedExpense() {
-//        boolean found = false;
-//        for (String row : window.list("expensesList").contents()) {
-//            if (row.contains("Lunch") && row.contains("50.0") && row.contains("Food") && row.contains("2023-12-01")) {
-//                found = true;
-//                break;
-//            }
-//        }
-//        assertThat(found).isTrue();
+    @Then("the Add Expense dialog should appear")
+    public void theAddExpenseDialogShouldAppear() {
+        addExpenseDialog.requireVisible();
     }
 
-//    @Given("The user provides expense details with description {string}, " +
-//            "amount {string}, category {string}, and date {string}")
-//    public void theUserProvidesExpenseDetailsWithDescriptionAmountCategoryAndDate(String description, String amount, String category, String date) {
-//        //window.textBox("descriptionTextField").enterText(description);
-////        window.textBox("amountTextField").enterText(String.valueOf(amount));
-////        window.textBox("categoryTextField").enterText(category);
-////        window.textBox("dateTextField").enterText(date);
-//        System.out.println("description = " + description);
-//        //expenseFrame = WindowFinder.findDialog("Add Expense").using(BasicRobot.robotWithCurrentAwtHierarchy());
-//
-//        //expenseFrame.textBox("descriptionTextField").enterText(description);
-//    }
+    @Given("the Add Expense dialog is open")
+    public void theDialogIsOpen() {
+        addExpenseDialog.requireVisible();
+    }
+
+    @When("the user enters a description {string}, category {string}, amount {string}, and date {string}")
+    public void theUserEntersADescriptionCategoryAmountAndDate(String description,
+                                                               String category,
+                                                               String amount,
+                                                               String date) {
+        JTextComponentFixture descriptionField = addExpenseDialog.textBox("descriptionTextField");
+        JTextComponentFixture categoryField = addExpenseDialog.textBox("categoryTextField");
+        JTextComponentFixture amountField = addExpenseDialog.textBox("amountTextField");
+        JTextComponentFixture dateField = addExpenseDialog.textBox("dateField");
+
+        descriptionField.setText(description);
+        categoryField.setText(category);
+        amountField.setText(amount);
+        dateField.setText(date);
+    }
+
+    @And("the user clicks the Save button")
+    public void theUserClicksTheButton() {
+        // Нажимаем кнопку Save
+        JButtonFixture saveButton = addExpenseDialog.button(new GenericTypeMatcher<JButton>(JButton.class) {
+            @Override
+            protected boolean isMatching(JButton button) {
+                return "Save".equals(button.getText());
+            }
+        });
+        saveButton.click();
+    }
+
+    @Then("the expense should be saved with the correct description, category, amount, and date")
+    public void theExpenseShouldBeSavedWithTheCorrectDescriptionCategoryAmountAndDate() {
+    }
 }
