@@ -9,14 +9,14 @@ import io.cucumber.java.en.When;
 import org.assertj.swing.core.BasicRobot;
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
+import org.assertj.swing.data.TableCell;
 import org.assertj.swing.finder.WindowFinder;
-import org.assertj.swing.fixture.DialogFixture;
-import org.assertj.swing.fixture.FrameFixture;
-import org.assertj.swing.fixture.JButtonFixture;
-import org.assertj.swing.fixture.JTextComponentFixture;
+import org.assertj.swing.fixture.*;
 
 import javax.swing.*;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
 
 public class ExpenseSteps {
@@ -99,4 +99,57 @@ public class ExpenseSteps {
     @Then("the expense should be saved with the correct description, category, amount, and date")
     public void theExpenseShouldBeSavedWithTheCorrectDescriptionCategoryAmountAndDate() {
     }
+
+
+    @Given("the expense table is loaded with data")
+    public void theExpenseTableIsLoadedWithData() {
+        JTableFixture expenseTable = rootWindow.table("expenseTable");
+        assertThat(expenseTable).isNotNull();
+        expenseTable.robot().waitForIdle();
+        assertThat(expenseTable.target().getRowCount()).isGreaterThan(0);
+    }
+
+    @When("the user selects the first row in the expense table")
+    public void theUserSelectsTheFirstRowInTheExpenseTable() {
+        JTableFixture expenseTable = rootWindow.table("expenseTable");
+        expenseTable.robot().waitForIdle();
+        expenseTable.selectRows(0);
+    }
+
+    @When("clicks the Update Expense button")
+    public void clicksTheUpdateExpenseButton() {
+        JButtonFixture updateButton = rootWindow.button("updateExpenseButton");
+        updateButton.click();
+    }
+
+    @When("updates the Description field to {string}")
+    public void updatesTheDescriptionFieldTo(String newDescription) {
+        DialogFixture dialog = WindowFinder.findDialog("Update Expense").using(rootWindow.robot());
+        JTextComponentFixture descriptionField = dialog.textBox("descriptionTextField");
+        descriptionField.setText(newDescription);
+    }
+
+    @When("clicks the Save button")
+    public void clicksTheSaveButton() {
+        DialogFixture dialog = WindowFinder.findDialog("Update Expense").using(rootWindow.robot());
+        JButtonFixture saveButton = dialog.button("saveButton");
+        saveButton.click();
+    }
+
+    @Then("the Add Expense dialog should close")
+    public void theAddExpenseDialogShouldClose() {
+        assertThatThrownBy(() -> WindowFinder.findDialog("Update Expense").using(rootWindow.robot()))
+                .isInstanceOf(Exception.class);
+    }
+
+    @Then("the expense table should show the updated Description {string} for the selected row")
+    public void theExpenseTableShouldShowTheUpdatedDescriptionForTheSelectedRow(String updatedDescription) {
+
+        JTableFixture expenseTable = rootWindow.table("expenseTable");
+        expenseTable.robot().waitForIdle();
+        String actualDescription = expenseTable.valueAt(TableCell.row(0).column(1));
+        assertThat(actualDescription).isEqualTo(updatedDescription);
+    }
+
+
 }

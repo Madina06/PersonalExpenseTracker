@@ -69,6 +69,7 @@ public class ExpenseView extends JFrame {
             expense.setAmount(amount);
             expense.setDate(date);
             new AddExpenseDialog(expenseController, this, expense).setVisible(true);
+            refreshExpenseTable();
         }
     }
 
