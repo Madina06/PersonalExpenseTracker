@@ -12,6 +12,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class ExpenseView extends JFrame {
+	private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
+    
+    public void setOptionPaneFactory(JOptionPaneFactory factory) {
+        this.optionPaneFactory = factory;
+    }
+
+    private void showMessage(String message) {
+        optionPaneFactory.showMessage(this, message);
+    }
 
     private JPanel contentPane;
     public JTable expenseTable;
@@ -91,7 +100,7 @@ public class ExpenseView extends JFrame {
 
                 new AddExpenseDialog(expenseController, this, expense).setVisible(true);
             } else {
-                JOptionPane.showMessageDialog(this, "Please select an expense to update.");
+            	showMessage("Please select an expense to update.");
             }
         });
 
@@ -101,9 +110,9 @@ public class ExpenseView extends JFrame {
                 int expenseId = Integer.parseInt(expenseTable.getValueAt(selectedRow, 0).toString());
                 expenseController.deleteExpense(expenseId);
                 refreshExpenseTable();
-                JOptionPane.showMessageDialog(this, "Expense deleted successfully!");
+                showMessage( "Expense deleted successfully!");
             } else {
-                JOptionPane.showMessageDialog(this, "Please select an expense to delete.");
+                showMessage("Please select an expense to delete.");
             }
         });
     }
@@ -123,7 +132,7 @@ public class ExpenseView extends JFrame {
                 });
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Failed to load expenses: " + e.getMessage());
+        	showMessage("Failed to load expenses: " + e.getMessage());
         }
     }
 

@@ -44,7 +44,7 @@ public class AddExpenseDialogIT {
     public void setUp() throws Exception {
         SwingUtilities.invokeAndWait(() -> {
             expenseView = new ExpenseView(expenseController);
-            expenseView.setVisible(true); 
+            expenseView.setVisible(true); // Окно должно быть отображено
         });
     }
 
@@ -59,7 +59,7 @@ public class AddExpenseDialogIT {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS Expenses (" +
                     "id SERIAL PRIMARY KEY, " +
-                    "description TEXT NOT NULL, " +
+                    "description TEXT, " +
                     "category VARCHAR(100) NOT NULL, " +
                     "amount DECIMAL(10, 2) NOT NULL, " +
                     "date DATE NOT NULL)");
@@ -88,6 +88,9 @@ public class AddExpenseDialogIT {
         dialog.getAmountField().setText("100.0");
         dialog.getCategoryField().setText("Food");
         dialog.getDateField().setText("2023-12-31");
+        dialog.setOptionPaneFactory((parent, message) -> {
+            assertEquals("Expense added successfully!", message);
+        });
 
         dialog.getSaveButton().doClick();
 
@@ -104,9 +107,12 @@ public class AddExpenseDialogIT {
         AddExpenseDialog dialog = new AddExpenseDialog(expenseController, expenseView);
 
         dialog.getDescriptionField().setText("Invalid Expense");
-        dialog.getAmountField().setText("InvalidAmount"); 
+        dialog.getAmountField().setText("InvalidAmount"); // Invalid input
         dialog.getCategoryField().setText("Food");
         dialog.getDateField().setText("2023-12-31");
+        dialog.setOptionPaneFactory((parent, message) -> {
+            assertEquals("Amount must be a valid number.", message);
+        });
 
         dialog.getSaveButton().doClick();
 
@@ -131,6 +137,9 @@ public class AddExpenseDialogIT {
         dialog.getAmountField().setText("150.0");
         dialog.getCategoryField().setText("Updated Category");
         dialog.getDateField().setText("2023-06-01");
+        dialog.setOptionPaneFactory((parent, message) -> {
+            assertEquals("Expense updated successfully!", message);
+        });
 
         dialog.getSaveButton().doClick();
 

@@ -8,6 +8,15 @@ import java.awt.*;
 import java.time.LocalDate;
 
 public class AddExpenseDialog extends JDialog {
+    private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
+    
+    public void setOptionPaneFactory(JOptionPaneFactory factory) {
+        this.optionPaneFactory = factory;
+    }
+
+    private void showMessage(String message) {
+        optionPaneFactory.showMessage(this, message);
+    }
 
     private JTextField descriptionField;
     private JTextField amountField;
@@ -32,6 +41,7 @@ public class AddExpenseDialog extends JDialog {
         setTitle(existingExpense == null ? "Add Expense" : "Update Expense");
         setName(existingExpense == null ? "Add Expense" : "Update Expense");
         setSize(400, 300);
+
 
         setLayout(new GridLayout(5, 2, 10, 10));
 
@@ -72,8 +82,9 @@ public class AddExpenseDialog extends JDialog {
                 String category = categoryField.getText();
                 String dateText = dateField.getText();
 
+                // Validate fields
                 if (description.isEmpty() || amountText.isEmpty() || category.isEmpty() || dateText.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "All fields must be filled out.");
+                	showMessage("All fields must be filled out.");
                     return;
                 }
 
@@ -83,14 +94,14 @@ public class AddExpenseDialog extends JDialog {
                 try {
                     amount = Double.parseDouble(amountText);
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Amount must be a valid number.");
+                	showMessage("Amount must be a valid number.");
                     return;
                 }
 
                 try {
                     date = LocalDate.parse(dateText);
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Date must be in the format YYYY-MM-DD.");
+                	showMessage("Date must be in the format YYYY-MM-DD.");
                     return;
                 }
 
@@ -103,16 +114,16 @@ public class AddExpenseDialog extends JDialog {
                 if (existingExpense != null) {
                     expense.setId(existingExpense.getId());
                     expenseController.updateExpense(expense);
-                    JOptionPane.showMessageDialog(this, "Expense updated successfully!");
+                    showMessage("Expense updated successfully!");
                 } else {
                     expenseController.addExpense(expense);
-                    JOptionPane.showMessageDialog(this, "Expense added successfully!");
+                    showMessage("Expense added successfully!");
                 }
 
                 parentView.refreshExpenseTable();
                 dispose();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Failed to save expense: " + ex.getMessage());
+            	showMessage("Failed to save expense: " + ex.getMessage());
             }
         });
 

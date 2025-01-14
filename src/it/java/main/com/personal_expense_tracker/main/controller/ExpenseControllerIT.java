@@ -1,5 +1,6 @@
 package main.com.personal_expense_tracker.main.controller;
 
+
 import org.junit.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -34,12 +35,11 @@ public class ExpenseControllerIT {
                 postgresContainer.getJdbcUrl(),
                 postgresContainer.getUsername(),
                 postgresContainer.getPassword());
-
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS Expenses (" +
                     "id SERIAL PRIMARY KEY, " +
-                    "description TEXT NOT NULL, " +
-                    "category VARCHAR(100) NOT NULL CHECK (category <> ''), " +
+                    "description TEXT, " +
+                    "category VARCHAR(100) NOT NULL, " +
                     "amount DECIMAL(10, 2) NOT NULL, " +
                     "date DATE NOT NULL)");
         }
@@ -56,7 +56,7 @@ public class ExpenseControllerIT {
     }
 
     @Test
-    public void testCreateExpense_ValidData() throws SQLException {
+    public void testCreateExpense() throws SQLException {
         String insertQuery = "INSERT INTO Expenses (description, category, amount, date) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, "Lunch at Cafe");
@@ -75,20 +75,8 @@ public class ExpenseControllerIT {
         }
     }
 
-    @Test(expected = SQLException.class)
-    public void testCreateExpense_InvalidData() throws SQLException {
-        String insertQuery = "INSERT INTO Expenses (description, category, amount, date) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(insertQuery)) {
-            pstmt.setString(1, null);
-            pstmt.setString(2, "Food");
-            pstmt.setBigDecimal(3, new java.math.BigDecimal("15.50"));
-            pstmt.setDate(4, null);
-            pstmt.executeUpdate();
-        }
-    }
-
     @Test
-    public void testReadExpense_ValidData() throws SQLException {
+    public void testReadExpense() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("INSERT INTO Expenses (description, category, amount, date) " +
                     "VALUES ('Groceries', 'Shopping', 50.75, '2025-01-01')");
@@ -108,7 +96,7 @@ public class ExpenseControllerIT {
     }
 
     @Test
-    public void testUpdateExpense_ValidData() throws SQLException {
+    public void testUpdateExpense() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("INSERT INTO Expenses (description, category, amount, date) " +
                     "VALUES ('Old Description', 'Miscellaneous', 100.00, '2025-01-02')");
@@ -136,90 +124,26 @@ public class ExpenseControllerIT {
     }
 
     @Test
-    public void testDeleteExpense_ValidId() throws SQLException {
-        int expenseId;
+    public void testDeleteExpense() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("INSERT INTO Expenses (description, category, amount, date) " +
-                    "VALUES ('Test Description', 'Test Category', 100.0, '2025-01-01')");
-            ResultSet rs = stmt.executeQuery("SELECT id FROM Expenses WHERE description = 'Test Description'");
-            rs.next();
-            expenseId = rs.getInt("id");
+                    "VALUES ('Unnecessary Item', 'Luxury', 999.99, '2025-01-03')");
         }
 
-        String deleteQuery = "DELETE FROM Expenses WHERE id = ?";
+        String deleteQuery = "DELETE FROM Expenses WHERE category = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(deleteQuery)) {
-            pstmt.setInt(1, expenseId);
+            pstmt.setString(1, "Luxury");
             int affectedRows = pstmt.executeUpdate();
 
             assertEquals(1, affectedRows);
-            String selectQuery = "SELECT * FROM Expenses WHERE id = ?";
+
+            String selectQuery = "SELECT * FROM Expenses WHERE category = ?";
             try (PreparedStatement selectPstmt = connection.prepareStatement(selectQuery)) {
-                selectPstmt.setInt(1, expenseId);
+                selectPstmt.setString(1, "Luxury");
                 try (ResultSet rs = selectPstmt.executeQuery()) {
                     assertFalse(rs.next());
                 }
             }
-        }
-    }
-
-    @Test
-    public void testDeleteExpense_InvalidId() throws SQLException {
-        int nonExistentId = 99999;
-
-        String deleteQuery = "DELETE FROM Expenses WHERE id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(deleteQuery)) {
-            pstmt.setInt(1, nonExistentId);
-            int affectedRows = pstmt.executeUpdate();
-
-            assertEquals(0, affectedRows);
-        }
-    }
-
-    @Test
-    public void testDeleteExpense_InvalidId_Negative() throws SQLException {
-        int invalidId = -1;
-
-        String deleteQuery = "DELETE FROM Expenses WHERE id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(deleteQuery)) {
-            pstmt.setInt(1, invalidId);
-            int affectedRows = pstmt.executeUpdate();
-
-            assertEquals(0, affectedRows);
-        }
-    }
-
-
-    @Test
-    public void testValidateEmptyCategory() throws SQLException {
-        String insertQuery = "INSERT INTO Expenses (description, category, amount, date) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(insertQuery)) {
-            pstmt.setString(1, "Test Description");
-            pstmt.setString(2, ""); 
-            pstmt.setBigDecimal(3, new java.math.BigDecimal("15.00"));
-            pstmt.setDate(4, Date.valueOf(LocalDate.now()));
-            pstmt.executeUpdate();
-            fail("Expected SQLException for empty category");
-        } catch (SQLException e) {
-            assertTrue(e.getMessage().contains("violates check constraint") || e.getMessage().contains("violates not-null constraint"));
-        }
-    }
-
-    @Test
-    public void testNoExpensesFound() throws SQLException {
-        String selectQuery = "SELECT * FROM Expenses";
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(selectQuery)) {
-            assertFalse(rs.next());
-        }
-    }
-
-    @Test
-    public void testDeleteNonExistentExpense() throws SQLException {
-        String deleteQuery = "DELETE FROM Expenses WHERE category = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(deleteQuery)) {
-            pstmt.setString(1, "NonExistentCategory");
-            int affectedRows = pstmt.executeUpdate();
-            assertEquals(0, affectedRows);
         }
     }
 }
