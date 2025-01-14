@@ -42,13 +42,6 @@ public class AddExpenseDialog extends JDialog {
 		setName(existingExpense == null ? "Add Expense" : "Update Expense");
 		setSize(400, 300);
 
-//        // Условие для тестов: проверяем parentView
-//        if (parentView != null && parentView instanceof JFrame) {
-//            setLocationRelativeTo(parentView);
-//        } else {
-//            setLocationRelativeTo(null); // Устанавливаем центр экрана для тестов
-//        }
-
 		setLayout(new GridLayout(5, 2, 10, 10));
 
 		add(new JLabel("Description:"));
