@@ -8,153 +8,155 @@ import java.awt.*;
 import java.time.LocalDate;
 
 public class AddExpenseDialog extends JDialog {
-    private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
-    
-    public void setOptionPaneFactory(JOptionPaneFactory factory) {
-        this.optionPaneFactory = factory;
-    }
+	private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
 
-    private void showMessage(String message) {
-        optionPaneFactory.showMessage(this, message);
-    }
+	public void setOptionPaneFactory(JOptionPaneFactory factory) {
+		this.optionPaneFactory = factory;
+	}
 
-    private JTextField descriptionField;
-    private JTextField amountField;
-    private JTextField categoryField;
-    private JTextField dateField;
-    private JButton saveButton;
-    private JButton cancelButton;
+	private void showMessage(String message) {
+		optionPaneFactory.showMessage(this, message);
+	}
 
-    private final ExpenseController expenseController;
-    private final ExpenseView parentView;
-    private final Expense existingExpense;
+	private JTextField descriptionField;
+	private JTextField amountField;
+	private JTextField categoryField;
+	private JTextField dateField;
+	private JButton saveButton;
+	private JButton cancelButton;
 
-    public AddExpenseDialog(ExpenseController expenseController, ExpenseView parentView) {
-        this(expenseController, parentView, null);
-    }
+	private final ExpenseController expenseController;
+	private final ExpenseView parentView;
+	private final Expense existingExpense;
 
-    public AddExpenseDialog(ExpenseController expenseController, ExpenseView parentView, Expense existingExpense) {
-        this.expenseController = expenseController;
-        this.parentView = parentView;
-        this.existingExpense = existingExpense;
+	public AddExpenseDialog(ExpenseController expenseController, ExpenseView parentView) {
+		this(expenseController, parentView, null);
+	}
 
-        setTitle(existingExpense == null ? "Add Expense" : "Update Expense");
-        setName(existingExpense == null ? "Add Expense" : "Update Expense");
-        setSize(400, 300);
+	public AddExpenseDialog(ExpenseController expenseController, ExpenseView parentView, Expense existingExpense) {
+		this.expenseController = expenseController;
+		this.parentView = parentView;
+		this.existingExpense = existingExpense;
 
+		setTitle(existingExpense == null ? "Add Expense" : "Update Expense");
+		setName(existingExpense == null ? "Add Expense" : "Update Expense");
+		setSize(400, 300);
 
-        setLayout(new GridLayout(5, 2, 10, 10));
+//        // Условие для тестов: проверяем parentView
+//        if (parentView != null && parentView instanceof JFrame) {
+//            setLocationRelativeTo(parentView);
+//        } else {
+//            setLocationRelativeTo(null); // Устанавливаем центр экрана для тестов
+//        }
 
-        add(new JLabel("Description:"));
-        descriptionField = new JTextField(existingExpense != null ? existingExpense.getDescription() : "");
-        descriptionField.setName("descriptionTextField");
-        add(descriptionField);
+		setLayout(new GridLayout(5, 2, 10, 10));
 
-        add(new JLabel("Amount:"));
-        amountField = new JTextField(existingExpense != null ? String.valueOf(existingExpense.getAmount()) : "");
-        amountField.setName("amountTextField");
-        add(amountField);
+		add(new JLabel("Description:"));
+		descriptionField = new JTextField(existingExpense != null ? existingExpense.getDescription() : "");
+		descriptionField.setName("descriptionTextField");
+		add(descriptionField);
 
-        add(new JLabel("Category:"));
-        categoryField = new JTextField(existingExpense != null ? existingExpense.getCategory() : "");
-        categoryField.setName("categoryTextField");
-        add(categoryField);
+		add(new JLabel("Amount:"));
+		amountField = new JTextField(existingExpense != null ? String.valueOf(existingExpense.getAmount()) : "");
+		amountField.setName("amountTextField");
+		add(amountField);
 
-        add(new JLabel("Date (YYYY-MM-DD):"));
-        dateField = new JTextField(existingExpense != null ? existingExpense.getDate().toString() : "");
-        dateField.setName("dateField");
-        add(dateField);
+		add(new JLabel("Category:"));
+		categoryField = new JTextField(existingExpense != null ? existingExpense.getCategory() : "");
+		categoryField.setName("categoryTextField");
+		add(categoryField);
 
-        saveButton = new JButton("Save");
-        saveButton.setName("saveButton");
-        saveButton.setBackground(new Color(76, 175, 80));
-        add(saveButton);
+		add(new JLabel("Date (YYYY-MM-DD):"));
+		dateField = new JTextField(existingExpense != null ? existingExpense.getDate().toString() : "");
+		dateField.setName("dateField");
+		add(dateField);
 
-        cancelButton = new JButton("Cancel");
-        cancelButton.setName("cancelButton");
-        cancelButton.setBackground(Color.GRAY);
-        add(cancelButton);
+		saveButton = new JButton("Save");
+		saveButton.setName("saveButton");
+		saveButton.setBackground(new Color(76, 175, 80));
+		add(saveButton);
 
-        saveButton.addActionListener(e -> {
-            try {
-                String description = descriptionField.getText();
-                String amountText = amountField.getText();
-                String category = categoryField.getText();
-                String dateText = dateField.getText();
+		cancelButton = new JButton("Cancel");
+		cancelButton.setName("cancelButton");
+		cancelButton.setBackground(Color.GRAY);
+		add(cancelButton);
 
-                // Validate fields
-                if (description.isEmpty() || amountText.isEmpty() || category.isEmpty() || dateText.isEmpty()) {
-                	showMessage("All fields must be filled out.");
-                    return;
-                }
+		saveButton.addActionListener(e -> {
+			String description = descriptionField.getText();
+			String amountText = amountField.getText();
+			String category = categoryField.getText();
+			String dateText = dateField.getText();
 
-                double amount;
-                LocalDate date;
+			// Validate fields
+			if (description.isEmpty() || amountText.isEmpty() || category.isEmpty() || dateText.isEmpty()) {
+				showMessage("All fields must be filled out.");
+				return;
+			}
 
-                try {
-                    amount = Double.parseDouble(amountText);
-                } catch (NumberFormatException ex) {
-                	showMessage("Amount must be a valid number.");
-                    return;
-                }
+			double amount;
+			LocalDate date;
 
-                try {
-                    date = LocalDate.parse(dateText);
-                } catch (Exception ex) {
-                	showMessage("Date must be in the format YYYY-MM-DD.");
-                    return;
-                }
+			try {
+				amount = Double.parseDouble(amountText);
+			} catch (NumberFormatException ex) {
+				showMessage("Amount must be a valid number.");
+				return;
+			}
 
-                Expense expense = new Expense();
-                expense.setDescription(description);
-                expense.setAmount(amount);
-                expense.setCategory(category);
-                expense.setDate(date);
+			try {
+				date = LocalDate.parse(dateText);
+			} catch (Exception ex) {
+				showMessage("Date must be in the format YYYY-MM-DD.");
+				return;
+			}
 
-                if (existingExpense != null) {
-                    expense.setId(existingExpense.getId());
-                    expenseController.updateExpense(expense);
-                    showMessage("Expense updated successfully!");
-                } else {
-                    expenseController.addExpense(expense);
-                    showMessage("Expense added successfully!");
-                }
+			Expense expense = new Expense();
+			expense.setDescription(description);
+			expense.setAmount(amount);
+			expense.setCategory(category);
+			expense.setDate(date);
 
-                parentView.refreshExpenseTable();
-                dispose();
-            } catch (Exception ex) {
-            	showMessage("Failed to save expense: " + ex.getMessage());
-            }
-        });
+			if (existingExpense != null) {
+				expense.setId(existingExpense.getId());
+				expenseController.updateExpense(expense);
+				showMessage("Expense updated successfully!");
+			} else {
+				expenseController.addExpense(expense);
+				showMessage("Expense added successfully!");
+			}
 
-        cancelButton.addActionListener(e -> {
-            dispose();
-        });
-    }
+			parentView.refreshExpenseTable();
+			dispose();
 
+		});
 
-    public JTextField getDescriptionField() {
-        return descriptionField;
-    }
+		cancelButton.addActionListener(e -> {
+			dispose();
+		});
+	}
 
-    public JTextField getAmountField() {
-        return amountField;
-    }
+	public JTextField getDescriptionField() {
+		return descriptionField;
+	}
 
-    public JTextField getCategoryField() {
-        return categoryField;
-    }
+	public JTextField getAmountField() {
+		return amountField;
+	}
 
-    public JTextField getDateField() {
-        return dateField;
-    }
+	public JTextField getCategoryField() {
+		return categoryField;
+	}
 
-    public JButton getSaveButton() {
-        return saveButton;
-    }
-    
-    public JButton getCancelButton() {
-        return cancelButton;
-    }
+	public JTextField getDateField() {
+		return dateField;
+	}
+
+	public JButton getSaveButton() {
+		return saveButton;
+	}
+
+	public JButton getCancelButton() {
+		return cancelButton;
+	}
 
 }

@@ -108,4 +108,27 @@ public class AddExpenseDialogTest {
 
         assertFalse(addExpenseDialog.isVisible());
     }
+    
+    @Test
+    public void testSaveNewExpenseInvalidDateFormat() {
+        JTextField descriptionField = addExpenseDialog.getDescriptionField();
+        JTextField amountField = addExpenseDialog.getAmountField();
+        JTextField categoryField = addExpenseDialog.getCategoryField();
+        JTextField dateField = addExpenseDialog.getDateField();
+        JButton saveButton = addExpenseDialog.getSaveButton();
+
+        descriptionField.setText("Sample Description");
+        amountField.setText("100.0");
+        categoryField.setText("Food");
+        
+        dateField.setText("2025/01/15");
+
+        addExpenseDialog.setOptionPaneFactory((parent, message) -> {
+            assertEquals("Date must be in the format YYYY-MM-DD.", message);
+        });
+
+        saveButton.doClick();
+
+        verify(mockExpenseController, never()).addExpense(any(Expense.class));
+    }
 }
