@@ -56,12 +56,7 @@ public class ExpenseViewTest {
 
     @Test
     public void testAddExpenseButton() {
-<<<<<<< HEAD
         JButton addButton = expenseView.addExpenseButton;
-=======
-        // Act
-        JButton addButton = expenseView.getAddExpenseButton();
->>>>>>> c57b429e11f3ff35ea6189b73561bd208d5c3be5
         addButton.doClick();
 
         verify(mockExpenseController, times(0)).addExpense(any(Expense.class)); // Непосредственно контроллер не вызывается
@@ -74,12 +69,7 @@ public class ExpenseViewTest {
         model.addRow(new Object[]{1, "Groceries", "Food", 100.0, LocalDate.of(2023, 1, 1).toString()});
         expenseTable.setRowSelectionInterval(0, 0);
 
-<<<<<<< HEAD
         JButton updateButton = expenseView.updateExpenseButton;
-=======
-        // Act
-        JButton updateButton = expenseView.getUpdateExpenseButton();
->>>>>>> c57b429e11f3ff35ea6189b73561bd208d5c3be5
         updateButton.doClick();
 
         verify(mockExpenseController, times(0)).updateExpense(any(Expense.class));
@@ -100,53 +90,17 @@ public class ExpenseViewTest {
         model.addRow(new Object[]{1, "Groceries", "Food", 100.0, LocalDate.of(2023, 1, 1).toString()});
         expenseTable.setRowSelectionInterval(0, 0);
 
-<<<<<<< HEAD
         JButton deleteButton = expenseView.deleteExpenseButton;
-=======
-        // Act
-        JButton deleteButton = expenseView.getDeleteExpenseButton();
->>>>>>> c57b429e11f3ff35ea6189b73561bd208d5c3be5
         deleteButton.doClick();
 
         verify(mockExpenseController, times(1)).deleteExpense(1);
     }
 
     @Test
-<<<<<<< HEAD
     public void testDeleteExpenseButton_NoSelection() {
         JButton deleteButton = expenseView.deleteExpenseButton;
-=======
-    public void testNoSelectionForDelete() {
-        // Arrange
-        JTable expenseTable = expenseView.expenseTable;
-        DefaultTableModel model = (DefaultTableModel) expenseTable.getModel();
-        model.addRow(new Object[]{1, "Groceries", "Food", 100.0, LocalDate.of(2023, 1, 1).toString()});
-
-        // Act
-        JButton deleteButton = expenseView.getDeleteExpenseButton();
-        expenseTable.clearSelection();
->>>>>>> c57b429e11f3ff35ea6189b73561bd208d5c3be5
         deleteButton.doClick();
 
         verify(mockExpenseController, times(0)).deleteExpense(anyInt());
     }
-<<<<<<< HEAD
-=======
-
-    @Test
-    public void testNoSelectionForUpdate() {
-        // Arrange
-        JTable expenseTable = expenseView.expenseTable;
-        DefaultTableModel model = (DefaultTableModel) expenseTable.getModel();
-        model.addRow(new Object[]{1, "Groceries", "Food", 100.0, LocalDate.of(2023, 1, 1).toString()});
-
-        // Act
-        JButton updateButton = expenseView.getUpdateExpenseButton();
-        expenseTable.clearSelection();
-        updateButton.doClick();
-
-        // Assert
-        verify(mockExpenseController, times(0)).updateExpense(any(Expense.class));
-    }
->>>>>>> c57b429e11f3ff35ea6189b73561bd208d5c3be5
 }

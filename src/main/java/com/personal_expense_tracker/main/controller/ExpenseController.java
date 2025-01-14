@@ -35,6 +35,7 @@ public class ExpenseController {
         validateExpense(expense);
         try {
             expenseRepository.updateExpense(expense);
+            
         } catch (SQLException e) {
             throw new RuntimeException("Failed to update expense: " + e.getMessage(), e);
         }
