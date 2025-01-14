@@ -1,6 +1,6 @@
 # PersonalExpenseTracker
 The Personal Expense Tracker Project, built for the Advanced Programming Techniques exam.
-[![Coverage](https://coveralls.io/repos/github/Madina06/PersonalExpenseTracker/badge.svg)](https://coveralls.io/github/Madina06/Order-Manager)
+[![Coverage Status](https://coveralls.io/repos/github/Madina06/PersonalExpenseTracker/badge.svg?branch=main)](https://coveralls.io/github/Madina06/PersonalExpenseTracker?branch=main)
 [![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=madinakuldeeva_personal-expense-tracker&metric=alert_status)](https://sonarcloud.io/dashboard?id=madinakuldeeva_personal-expense-tracker)
 [![Duplications](https://sonarcloud.io/api/project_badges/measure?project=madinakuldeeva_personal-expense-tracker&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=madinakuldeeva_personal-expense-tracker)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=madinakuldeeva_personal-expense-tracker&metric=coverage)](https://sonarcloud.io/dashboard?id=madinakuldeeva_personal-expense-tracker)
