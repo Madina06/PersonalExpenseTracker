@@ -44,7 +44,7 @@ public class AddExpenseDialogIT {
     public void setUp() throws Exception {
         SwingUtilities.invokeAndWait(() -> {
             expenseView = new ExpenseView(expenseController);
-            expenseView.setVisible(true); // Окно должно быть отображено
+            expenseView.setVisible(true); 
         });
     }
 
