@@ -1,22 +1,27 @@
 package main.com.personal_expense_tracker.main.view;
 
-import com.personal_expense_tracker.main.controller.ExpenseController;
-import com.personal_expense_tracker.main.model.Expense;
-import com.personal_expense_tracker.main.repository.ExpenseRepository;
-import com.personal_expense_tracker.main.view.AddExpenseDialog;
-import com.personal_expense_tracker.main.view.ExpenseView;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.*;
-import org.testcontainers.containers.PostgreSQLContainer;
-
-import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.junit.Assert.assertEquals;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.testcontainers.containers.PostgreSQLContainer;
+
+import com.personal_expense_tracker.main.controller.ExpenseController;
+import com.personal_expense_tracker.main.model.Expense;
+import com.personal_expense_tracker.main.repository.ExpenseRepository;
+import com.personal_expense_tracker.main.view.AddExpenseDialog;
+import com.personal_expense_tracker.main.view.ExpenseView;
 
 public class AddExpenseDialogIT {
 
@@ -107,7 +112,7 @@ public class AddExpenseDialogIT {
         AddExpenseDialog dialog = new AddExpenseDialog(expenseController, expenseView);
 
         dialog.getDescriptionField().setText("Invalid Expense");
-        dialog.getAmountField().setText("InvalidAmount"); // Invalid input
+        dialog.getAmountField().setText("InvalidAmount"); 
         dialog.getCategoryField().setText("Food");
         dialog.getDateField().setText("2023-12-31");
         dialog.setOptionPaneFactory((parent, message) -> {

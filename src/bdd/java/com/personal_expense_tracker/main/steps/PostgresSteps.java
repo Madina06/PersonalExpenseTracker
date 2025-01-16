@@ -1,13 +1,6 @@
-// PostgresSteps.java
 package com.personal_expense_tracker.main.steps;
 
-import com.personal_expense_tracker.main.model.Expense;
-import com.personal_expense_tracker.main.repository.ExpenseRepository;
-import com.personal_expense_tracker.main.utils.DatabaseConnection;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +8,14 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.personal_expense_tracker.main.model.Expense;
+import com.personal_expense_tracker.main.repository.ExpenseRepository;
+import com.personal_expense_tracker.main.utils.DatabaseConnection;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 
 public class PostgresSteps {
 

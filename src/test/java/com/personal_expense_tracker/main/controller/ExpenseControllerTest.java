@@ -1,11 +1,12 @@
 package com.personal_expense_tracker.main.controller;
 
-import com.personal_expense_tracker.main.model.Expense;
-import com.personal_expense_tracker.main.repository.ExpenseRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -13,8 +14,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import com.personal_expense_tracker.main.model.Expense;
+import com.personal_expense_tracker.main.repository.ExpenseRepository;
 
 public class ExpenseControllerTest {
 

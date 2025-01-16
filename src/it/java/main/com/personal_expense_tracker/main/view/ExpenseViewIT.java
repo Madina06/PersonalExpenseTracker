@@ -1,22 +1,27 @@
 package main.com.personal_expense_tracker.main.view;
 
 
-import com.personal_expense_tracker.main.controller.ExpenseController;
-import com.personal_expense_tracker.main.model.Expense;
-import com.personal_expense_tracker.main.repository.ExpenseRepository;
-import com.personal_expense_tracker.main.view.ExpenseView;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.*;
-import org.testcontainers.containers.PostgreSQLContainer;
-
-import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
+import javax.swing.table.DefaultTableModel;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.testcontainers.containers.PostgreSQLContainer;
+
+import com.personal_expense_tracker.main.controller.ExpenseController;
+import com.personal_expense_tracker.main.model.Expense;
+import com.personal_expense_tracker.main.repository.ExpenseRepository;
+import com.personal_expense_tracker.main.view.ExpenseView;
 
 public class ExpenseViewIT {
 

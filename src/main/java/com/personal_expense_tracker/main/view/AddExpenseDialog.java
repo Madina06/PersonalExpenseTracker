@@ -1,11 +1,17 @@
 package com.personal_expense_tracker.main.view;
 
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.time.LocalDate;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
 import com.personal_expense_tracker.main.controller.ExpenseController;
 import com.personal_expense_tracker.main.model.Expense;
-
-import javax.swing.*;
-import java.awt.*;
-import java.time.LocalDate;
 
 public class AddExpenseDialog extends JDialog {
 	private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
@@ -80,7 +86,6 @@ public class AddExpenseDialog extends JDialog {
 			String category = categoryField.getText();
 			String dateText = dateField.getText();
 
-			// Validate fields
 			if (description.isEmpty() || amountText.isEmpty() || category.isEmpty() || dateText.isEmpty()) {
 				showMessage("All fields must be filled out.");
 				return;

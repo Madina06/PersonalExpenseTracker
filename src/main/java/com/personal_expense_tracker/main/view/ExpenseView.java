@@ -1,15 +1,25 @@
 package com.personal_expense_tracker.main.view;
 
-import com.personal_expense_tracker.main.controller.ExpenseController;
-import com.personal_expense_tracker.main.model.Expense;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.time.LocalDate;
+import java.util.List;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.time.LocalDate;
-import java.util.List;
+
+import com.personal_expense_tracker.main.controller.ExpenseController;
+import com.personal_expense_tracker.main.model.Expense;
 
 public class ExpenseView extends JFrame {
 	private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;

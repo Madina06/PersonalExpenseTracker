@@ -1,19 +1,21 @@
 package com.personal_expense_tracker.main;
 
 
-import com.personal_expense_tracker.main.controller.ExpenseController;
-import com.personal_expense_tracker.main.repository.ExpenseRepository;
-import com.personal_expense_tracker.main.utils.DatabaseConnection;
-import com.personal_expense_tracker.main.view.ExpenseView;
-import picocli.CommandLine;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.EventQueue;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JOptionPane;
+
+import com.personal_expense_tracker.main.controller.ExpenseController;
+import com.personal_expense_tracker.main.repository.ExpenseRepository;
+import com.personal_expense_tracker.main.utils.DatabaseConnection;
+import com.personal_expense_tracker.main.view.ExpenseView;
+
+import picocli.CommandLine;
 
 @CommandLine.Command(mixinStandardHelpOptions = true)
 public class App implements Callable<Void> {
