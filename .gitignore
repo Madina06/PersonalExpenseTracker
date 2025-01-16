@@ -1,26 +1,2 @@
-# Eclipse-specific files
-.project
-.settings/
-.idea
-
 # Maven-specific files
 target/
-!**/src/main/**
-!**/src/test/**
-
-# Compiled class files
-*.class
-
-# Logs and temporary files
-*.log
-*.tmp
-
-# OS-specific files
-.DS_Store
-Thumbs.db
-
-# Git-specific files
-.git/
-
-bin/
-
