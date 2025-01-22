@@ -41,11 +41,11 @@ public class ExpenseSteps {
 
     @When("the user clicks the Add Expense button")
     public void theUserClicksTheAddExpensesButton() {
-        window.robot().waitForIdle(); // Ожидание отрисовки интерфейса
+        window.robot().waitForIdle();
         System.out.println("Trying to find the 'Add Expense' button...");
 
         JButtonFixture addExpense = window.button(JButtonMatcher.withText("Add Expense"));
-        addExpense.requireVisible(); // Проверяем, что кнопка видима
+        addExpense.requireVisible();
         addExpense.click();
 
         System.out.println("Button clicked, opening dialog...");
