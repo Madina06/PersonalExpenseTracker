@@ -9,7 +9,6 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,7 +21,8 @@ import com.personal_expense_tracker.main.controller.ExpenseController;
 import com.personal_expense_tracker.main.model.Expense;
 
 public class ExpenseView extends JFrame {
-    private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
+    private static final long serialVersionUID = 1L;
+	private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
 
     public void setOptionPaneFactory(JOptionPaneFactory factory) {
         this.optionPaneFactory = factory;
@@ -32,12 +32,10 @@ public class ExpenseView extends JFrame {
         optionPaneFactory.showMessage(this, message);
     }
 
-    private JPanel contentPane;
     public JTable expenseTable;
     JButton addExpenseButton;
     JButton updateExpenseButton;
     JButton deleteExpenseButton;
-    private JList<Expense> listAllExpenses;
     DefaultListModel<Expense> listAllExpensesModel;
 
     private final ExpenseController expenseController;

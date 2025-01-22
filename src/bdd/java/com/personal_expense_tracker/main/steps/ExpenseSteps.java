@@ -22,8 +22,6 @@ import io.cucumber.java.en.When;
 
 public class ExpenseSteps {
 
-    private JFrame mainFrame;
-
     private DialogFixture addExpenseDialog;
 
     private FrameFixture window;
