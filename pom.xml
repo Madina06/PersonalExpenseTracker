@@ -158,6 +158,7 @@
                     <excludes>
                         <exclude>**/model/*.*</exclude>
                         <exclude>**/App.*</exclude>
+                        <exclude>**/DatabaseConnection.*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
