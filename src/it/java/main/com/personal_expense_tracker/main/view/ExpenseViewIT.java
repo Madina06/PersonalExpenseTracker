@@ -25,8 +25,10 @@ import com.personal_expense_tracker.main.view.ExpenseView;
 
 public class ExpenseViewIT {
 
-    private static final PostgreSQLContainer<?> postgresContainer =
-            new PostgreSQLContainer<>("postgres:15")
+    private static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:15");
+
+	private static final PostgreSQLContainer<?> postgresContainer =
+            POSTGRE_SQL_CONTAINER
                     .withDatabaseName("expense_testdb")
                     .withUsername("madina")
                     .withPassword("m123");
