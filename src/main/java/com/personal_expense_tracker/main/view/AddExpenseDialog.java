@@ -14,8 +14,7 @@ import com.personal_expense_tracker.main.controller.ExpenseController;
 import com.personal_expense_tracker.main.model.Expense;
 
 public class AddExpenseDialog extends JDialog {
-    private static final long serialVersionUID = 1L;
-	private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
+    private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
 
     public void setOptionPaneFactory(JOptionPaneFactory factory) {
         this.optionPaneFactory = factory;
@@ -32,11 +31,19 @@ public class AddExpenseDialog extends JDialog {
     private JButton saveButton;
     private JButton cancelButton;
 
+    private final ExpenseController expenseController;
+    private final ExpenseView parentView;
+    private final Expense existingExpense;
+
     public AddExpenseDialog(ExpenseController expenseController, ExpenseView parentView) {
         this(expenseController, parentView, null);
     }
 
     public AddExpenseDialog(ExpenseController expenseController, ExpenseView parentView, Expense existingExpense) {
+        this.expenseController = expenseController;
+        this.parentView = parentView;
+        this.existingExpense = existingExpense;
+
         setTitle(existingExpense == null ? "Add Expense" : "Update Expense");
         setName(existingExpense == null ? "Add Expense" : "Update Expense");
         setSize(400, 300);

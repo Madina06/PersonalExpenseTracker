@@ -23,10 +23,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 public class ExpenseControllerIT {
 
-    private static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER = new PostgreSQLContainer<>("postgres:15");
-
-	private static final PostgreSQLContainer<?> postgresContainer =
-            POSTGRE_SQL_CONTAINER
+    private static final PostgreSQLContainer<?> postgresContainer =
+            new PostgreSQLContainer<>("postgres:15")
                     .withDatabaseName("expense_testdb")
                     .withUsername("madina")
                     .withPassword("m123");
