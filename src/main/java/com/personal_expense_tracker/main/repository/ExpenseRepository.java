@@ -22,7 +22,7 @@ public class ExpenseRepository {
     public void createTableIfNotExists() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS expenses (" +
                      "id SERIAL PRIMARY KEY, " +
-                     "description TEXT NOT NULL, " +
+                     "description TEXT, " +
                      "category VARCHAR(100) NOT NULL , " +
                      "amount DECIMAL(10, 2) NOT NULL, " +
                      "date DATE NOT NULL)";
