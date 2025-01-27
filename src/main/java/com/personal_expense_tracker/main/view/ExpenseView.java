@@ -33,9 +33,9 @@ public class ExpenseView extends JFrame {
     }
 
     public JTable expenseTable;
-    JButton addExpenseButton;
-    JButton updateExpenseButton;
-    JButton deleteExpenseButton;
+    public JButton addExpenseButton;
+    public JButton updateExpenseButton;
+    public JButton deleteExpenseButton;
     DefaultListModel<Expense> listAllExpensesModel;
 
     private final ExpenseController expenseController;
@@ -60,9 +60,6 @@ public class ExpenseView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(expenseTable);
 
         JPanel buttonPanel = new JPanel();
-
-        expenseTable = new JTable(tableModel);
-        expenseTable.setName("expenseTable");
 
         addExpenseButton = new JButton("Add Expense");
         addExpenseButton.setName("addExpenseButton");

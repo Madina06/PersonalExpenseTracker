@@ -62,7 +62,7 @@ public class ExpenseControllerIT {
     @After
     public void tearDownDatabase() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("TRUNCATE TABLE Expenses");
+            stmt.execute("DROP TABLE Expenses");
         }
         if (connection != null) {
             connection.close();
