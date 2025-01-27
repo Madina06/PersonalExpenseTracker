@@ -22,11 +22,11 @@ import com.personal_expense_tracker.main.model.Expense;
 
 public class ExpenseView extends JFrame {
     private static final long serialVersionUID = 1L;
-	private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
+    private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
 
     public void setOptionPaneFactory(JOptionPaneFactory factory) {
         this.optionPaneFactory = factory;
-	}
+    }
 
     private void showMessage(String message) {
         optionPaneFactory.showMessage(this, message);

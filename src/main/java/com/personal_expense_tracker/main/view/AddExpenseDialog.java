@@ -15,7 +15,7 @@ import com.personal_expense_tracker.main.model.Expense;
 
 public class AddExpenseDialog extends JDialog {
     private static final long serialVersionUID = 1L;
-	private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
+    private JOptionPaneFactory optionPaneFactory = JOptionPane::showMessageDialog;
 
     public void setOptionPaneFactory(JOptionPaneFactory factory) {
         this.optionPaneFactory = factory;

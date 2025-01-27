@@ -30,6 +30,7 @@ public class App implements Callable<Void> {
             try {
                 Connection connection = DatabaseConnection.connect();
                 ExpenseRepository expenseRepository = new ExpenseRepository(connection);
+                expenseRepository.createTableIfNotExists();
                 ExpenseController expenseController = new ExpenseController(expenseRepository);
                 ExpenseView expenseView = new ExpenseView(expenseController);
                 expenseView.setVisible(true);
